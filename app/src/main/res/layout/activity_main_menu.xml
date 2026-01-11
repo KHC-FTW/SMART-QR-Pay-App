@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.MainMenuActivity">
+
+    <TextView
+        android:id="@+id/headerSmartQrPay"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="18dp"
+        android:text="SMART-QR Pay"
+        android:textColor="@android:color/white"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btnSetting"
+        android:layout_width="45dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="12dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Setting button"
+        android:padding="8dp"
+        android:src="@drawable/ic_menu_24"
+        app:tint="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/headerSmartQrPay" />
+
+    <ScrollView
+        android:id="@+id/svUserFunctions"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:paddingTop="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/headerSmartQrPay">
+
+        <LinearLayout
+            android:id="@+id/linearLayoutContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayoutUserInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                android:layout_marginEnd="25dp"
+                android:layout_marginTop="10dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/linearLayoutContainer">
+
+                <TextView
+                    android:id="@+id/tvWelcomeLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Welcome!"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/constraintLayoutUserInfo" />
+
+                <TextView
+                    android:id="@+id/tvUsername"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text=""
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/tvWelcomeLabel"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tvCurrentBalanceLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="13dp"
+                    android:text="Current Balance:"
+                    android:textSize="27sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tvWelcomeLabel" />
+
+                <TextView
+                    android:id="@+id/tvCurrentBalanceSign"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:text="HK$"
+                    android:textSize="45sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tvCurrentBalanceLabel" />
+
+                <TextView
+                    android:id="@+id/tvCurrentBalanceValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="15dp"
+                    android:text=""
+                    android:textSize="45sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/tvCurrentBalanceSign"
+                    app:layout_constraintTop_toBottomOf="@+id/tvCurrentBalanceLabel" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/quickActionContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                android:layout_marginEnd="25dp"
+                android:layout_marginTop="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayoutUserInfo">
+
+                <TextView
+                    android:id="@+id/tvQuickActionLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Quick Actions:"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:paddingBottom="15dp"
+                    app:layout_constraintStart_toStartOf="@+id/quickActionContainer"
+                    app:layout_constraintTop_toTopOf="@+id/quickActionContainer" />
+
+                <LinearLayout
+                    android:id="@+id/payContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingBottom="15dp"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    app:layout_constraintStart_toStartOf="@+id/quickActionContainer"
+                    app:layout_constraintEnd_toEndOf="@+id/quickActionContainer"
+                    app:layout_constraintTop_toBottomOf="@+id/tvQuickActionLabel">
+
+                    <ImageButton
+                        android:id="@+id/payIcon"
+                        android:contentDescription="Pay Icon"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:padding="6dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/pay_icon"
+                        android:background="@color/cardview_light_background"
+                        app:layout_constraintDimensionRatio="1:1" />
+
+                    <Button
+                        android:id="@+id/btnPay"
+                        android:text="Pay"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginVertical="2dp"
+                        android:layout_marginStart="10dp"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="25dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/receiveContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingBottom="15dp"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    app:layout_constraintStart_toStartOf="@+id/quickActionContainer"
+                    app:layout_constraintEnd_toEndOf="@+id/quickActionContainer"
+                    app:layout_constraintTop_toBottomOf="@+id/payContainer">
+
+                    <ImageButton
+                        android:id="@+id/receiveIcon"
+                        android:contentDescription="Receive Icon"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:padding="6dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/receive_icon"
+                        android:background="@color/cardview_light_background"
+                        app:layout_constraintDimensionRatio="1:1" />
+
+                    <Button
+                        android:id="@+id/btnReceive"
+                        android:text="Receive"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginVertical="2dp"
+                        android:layout_marginStart="10dp"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="25dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/historyContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingBottom="15dp"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    app:layout_constraintStart_toStartOf="@+id/quickActionContainer"
+                    app:layout_constraintEnd_toEndOf="@+id/quickActionContainer"
+                    app:layout_constraintTop_toBottomOf="@+id/receiveContainer">
+
+                    <ImageButton
+                        android:id="@+id/historyIcon"
+                        android:contentDescription="History Icon"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:padding="6dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/history_icon"
+                        android:background="@color/cardview_light_background"
+                        app:layout_constraintDimensionRatio="1:1" />
+
+                    <Button
+                        android:id="@+id/btnHistory"
+                        android:text="History"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginVertical="2dp"
+                        android:layout_marginStart="10dp"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="25dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/topUpContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingBottom="15dp"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    app:layout_constraintStart_toStartOf="@+id/quickActionContainer"
+                    app:layout_constraintEnd_toEndOf="@+id/quickActionContainer"
+                    app:layout_constraintTop_toBottomOf="@+id/historyContainer">
+
+                    <ImageButton
+                        android:id="@+id/topUpIcon"
+                        android:contentDescription="Top Up Icon"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:scaleType="fitCenter"
+                        android:padding="6dp"
+                        android:src="@drawable/top_up_icon"
+                        android:background="@color/cardview_light_background"
+                        app:layout_constraintDimensionRatio="1:1" />
+
+                    <Button
+                        android:id="@+id/btnTopUp"
+                        android:text="Top Up"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginVertical="2dp"
+                        android:layout_marginStart="10dp"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="25dp" />
+
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+        </LinearLayout>
+
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

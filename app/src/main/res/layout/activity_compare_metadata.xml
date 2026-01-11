@@ -1,0 +1,902 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.CompareMetadataActivity">
+
+    <TextView
+        android:id="@+id/headerCompareMetadata"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="18dp"
+        android:text="Compare Metadata"
+        android:textColor="@android:color/white"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginEnd="10dp"
+        android:backgroundTint="@android:color/transparent"
+        android:minWidth="64dp"
+        android:minHeight="40dp"
+        android:paddingHorizontal="8dp"
+        android:text=" &lt; Back "
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/headerCompareMetadata"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- ========== SCAN UI (default visible) ========== -->
+    <FrameLayout
+        android:id="@+id/cameraContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/headerCompareMetadata">
+
+        <androidx.camera.view.PreviewView
+            android:id="@+id/previewView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:implementationMode="performance" />
+
+        <TextView
+            android:id="@+id/tvScanHint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#66000000"
+            android:padding="10dp"
+            android:text="Scan a Transfer Metadata QR code"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+
+    </FrameLayout>
+
+    <!-- ========== RESULT UI (shown after a valid QR scanned) ========== -->
+    <ScrollView
+        android:visibility="gone"
+        android:id="@+id/resultsScrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/headerCompareMetadata">
+
+        <LinearLayout
+            android:id="@+id/resultsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="22dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="40dp">
+
+            <!-- Helper note: Keep tables static in XML; fill values later in Java -->
+
+            <!-- Timestamp table -->
+            <TextView
+                android:id="@+id/tvHeaderTimestamp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Timestamp:"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <TableLayout
+                android:id="@+id/tableTimestamp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:stretchColumns="1">
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tvTimestampLabelYou"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text="You"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:background="#deeffa"/>
+
+                    <TextView
+                        android:id="@+id/tvTimestampValueYou"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text=""
+                        android:textSize="22sp"
+                        android:background="#f0f0f0"/>
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tvTimestampLabelOther"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text="Other"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:background="#e4dff5"/>
+
+                    <TextView
+                        android:id="@+id/tvTimestampValueOther"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text=""
+                        android:textSize="22sp"
+                        android:background="#faf7f7"/>
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tvTimestampLabelDiff"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text="Difference"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:background="#f5dfe4"/>
+
+                    <TextView
+                        android:id="@+id/tvTimestampValueDiff"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text=""
+                        android:textSize="22sp"
+                        android:background="#f0f0f0"/>
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tvTimestampLabelTol"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tolerance"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:background="#dff5e3"/>
+
+                    <TextView
+                        android:id="@+id/tvTimestampValueTol"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text=""
+                        android:textSize="22sp"
+                        android:background="#faf7f7"/>
+                </TableRow>
+            </TableLayout>
+
+            <!-- Latitude table -->
+            <TextView
+                android:id="@+id/tvHeaderLatitude"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="Latitude:"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <TableLayout
+                android:id="@+id/tableLatitude"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:stretchColumns="1">
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tvLatitudeLabelYou"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text="You"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:background="#deeffa"/>
+
+                    <TextView
+                        android:id="@+id/tvLatitudeValueYou"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text=""
+                        android:textSize="22sp"
+                        android:background="#f0f0f0"/>
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tvLatitudeLabelOther"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text="Other"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:background="#e4dff5"/>
+
+                    <TextView
+                        android:id="@+id/tvLatitudeValueOther"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text=""
+                        android:textSize="22sp"
+                        android:background="#faf7f7"/>
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tvLatitudeLabelDiff"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text="Difference"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:background="#f5dfe4"/>
+
+                    <TextView
+                        android:id="@+id/tvLatitudeValueDiff"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text=""
+                        android:textSize="22sp"
+                        android:background="#f0f0f0"/>
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tvLatitudeLabelTol"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tolerance"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:background="#dff5e3"/>
+
+                    <TextView
+                        android:id="@+id/tvLatitudeValueTol"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text=""
+                        android:textSize="22sp"
+                        android:background="#faf7f7"/>
+                </TableRow>
+            </TableLayout>
+
+            <!-- Longitude table -->
+            <TextView
+                android:id="@+id/tvHeaderLongitude"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="Longitude:"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <TableLayout
+                android:id="@+id/tableLongitude"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:stretchColumns="1">
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tvLongitudeLabelYou"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text="You"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:background="#deeffa"/>
+
+                    <TextView
+                        android:id="@+id/tvLongitudeValueYou"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text=""
+                        android:textSize="22sp"
+                        android:background="#f0f0f0"/>
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tvLongitudeLabelOther"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text="Other"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:background="#e4dff5"/>
+
+                    <TextView
+                        android:id="@+id/tvLongitudeValueOther"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text=""
+                        android:textSize="22sp"
+                        android:background="#faf7f7"/>
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tvLongitudeLabelDiff"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text="Difference"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:background="#f5dfe4"/>
+
+                    <TextView
+                        android:id="@+id/tvLongitudeValueDiff"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text=""
+                        android:textSize="22sp"
+                        android:background="#f0f0f0"/>
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tvLongitudeLabelTol"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tolerance"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:background="#dff5e3"/>
+
+                    <TextView
+                        android:id="@+id/tvLongitudeValueTol"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text=""
+                        android:textSize="22sp"
+                        android:background="#faf7f7"/>
+                </TableRow>
+            </TableLayout>
+
+            <!-- Accelerometer X table -->
+            <TextView
+                android:id="@+id/tvHeaderAccelX"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="Accelerometer X:"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <TableLayout
+                android:id="@+id/tableAccelX"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:stretchColumns="1">
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tvAccelXLabelYou"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text="You"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:background="#deeffa"/>
+
+                    <TextView
+                        android:id="@+id/tvAccelXValueYou"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text=""
+                        android:textSize="22sp"
+                        android:background="#f0f0f0"/>
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tvAccelXLabelOther"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text="Other"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:background="#e4dff5"/>
+
+                    <TextView
+                        android:id="@+id/tvAccelXValueOther"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text=""
+                        android:textSize="22sp"
+                        android:background="#faf7f7"/>
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tvAccelXLabelDiff"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text="Difference"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:background="#f5dfe4"/>
+
+                    <TextView
+                        android:id="@+id/tvAccelXValueDiff"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text=""
+                        android:textSize="22sp"
+                        android:background="#f0f0f0"/>
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tvAccelXLabelTol"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tolerance"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:background="#dff5e3"/>
+
+                    <TextView
+                        android:id="@+id/tvAccelXValueTol"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text=""
+                        android:textSize="22sp"
+                        android:background="#faf7f7"/>
+                </TableRow>
+            </TableLayout>
+
+            <!-- Accelerometer Y table -->
+            <TextView
+                android:id="@+id/tvHeaderAccelY"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="Accelerometer Y:"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <TableLayout
+                android:id="@+id/tableAccelY"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:stretchColumns="1">
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tvAccelYLabelYou"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text="You"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:background="#deeffa"/>
+
+                    <TextView
+                        android:id="@+id/tvAccelYValueYou"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text=""
+                        android:textSize="22sp"
+                        android:background="#f0f0f0"/>
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tvAccelYLabelOther"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text="Other"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:background="#e4dff5"/>
+
+                    <TextView
+                        android:id="@+id/tvAccelYValueOther"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text=""
+                        android:textSize="22sp"
+                        android:background="#faf7f7"/>
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tvAccelYLabelDiff"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text="Difference"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:background="#f5dfe4"/>
+
+                    <TextView
+                        android:id="@+id/tvAccelYValueDiff"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text=""
+                        android:textSize="22sp"
+                        android:background="#f0f0f0"/>
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tvAccelYLabelTol"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tolerance"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:background="#dff5e3"/>
+
+                    <TextView
+                        android:id="@+id/tvAccelYValueTol"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text=""
+                        android:textSize="22sp"
+                        android:background="#faf7f7"/>
+                </TableRow>
+            </TableLayout>
+
+            <!-- Accelerometer Z table -->
+            <TextView
+                android:id="@+id/tvHeaderAccelZ"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="Accelerometer Z:"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <TableLayout
+                android:id="@+id/tableAccelZ"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:stretchColumns="1">
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tvAccelZLabelYou"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text="You"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:background="#deeffa"/>
+
+                    <TextView
+                        android:id="@+id/tvAccelZValueYou"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text=""
+                        android:textSize="22sp"
+                        android:background="#f0f0f0"/>
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tvAccelZLabelOther"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text="Other"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:background="#e4dff5"/>
+
+                    <TextView
+                        android:id="@+id/tvAccelZValueOther"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text=""
+                        android:textSize="22sp"
+                        android:background="#faf7f7"/>
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tvAccelZLabelDiff"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text="Difference"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:background="#f5dfe4"/>
+
+                    <TextView
+                        android:id="@+id/tvAccelZValueDiff"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text=""
+                        android:textSize="22sp"
+                        android:background="#f0f0f0"/>
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tvAccelZLabelTol"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tolerance"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:background="#dff5e3"/>
+
+                    <TextView
+                        android:id="@+id/tvAccelZValueTol"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="13dp"
+                        android:paddingRight="13dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text=""
+                        android:textSize="22sp"
+                        android:background="#faf7f7"/>
+                </TableRow>
+            </TableLayout>
+
+        <LinearLayout
+            android:id="@+id/buttonContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingHorizontal="28dp"
+            android:paddingTop="50dp"
+            android:paddingBottom="35dp">
+
+            <Button
+                android:id="@+id/btnScanAgain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="30dp"
+                android:paddingBottom="30dp"
+                android:paddingLeft="55dp"
+                android:paddingRight="55dp"
+                android:text="Scan Again"
+                android:textAllCaps="false"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                />
+        </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

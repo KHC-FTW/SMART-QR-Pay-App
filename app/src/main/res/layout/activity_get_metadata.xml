@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Full-width header (no side margins) -->
+    <TextView
+        android:id="@+id/tvHeader"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="18dp"
+        android:text="Get Metadata"
+        android:textColor="@android:color/white"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginEnd="12dp"
+        android:backgroundTint="@android:color/transparent"
+        android:minHeight="40dp"
+        android:minWidth="64dp"
+        android:paddingHorizontal="8dp"
+        android:text="Back"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@id/tvHeader"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvHeader" />
+
+    <!-- Content container with outer margin (everything except the header) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/contentContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvHeader">
+
+        <!-- Center area: metadata + buttons (~2/3 of available height) -->
+
+        <!-- Error area (~1/3 of available height) -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/topSection"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/tvError"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.66"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <!-- Metadata rows container, centered horizontally and vertically-ish -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/metadataContainer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@id/buttonsGuideline"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <!-- Row 1: Timestamp -->
+                <TextView
+                    android:id="@+id/lblTimestamp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:text="Timestamp: "
+                    android:textSize="19sp"
+                    app:layout_constraintBaseline_toBaselineOf="@id/tvTimestamp"
+                    app:layout_constraintEnd_toStartOf="@id/tvTimestamp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintWidth_percent="0.57" />
+
+                <TextView
+                    android:id="@+id/tvTimestamp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:maxLines="2"
+                    android:text="—"
+                    android:textSize="19sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/lblTimestamp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent="0.55" />
+
+                <!-- Row 2: Latitude -->
+                <TextView
+                    android:id="@+id/lblLatitude"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:gravity="end"
+                    android:text="Latitude: "
+                    android:textSize="19sp"
+                    app:layout_constraintBaseline_toBaselineOf="@id/tvLatitude"
+                    app:layout_constraintEnd_toStartOf="@id/tvLatitude"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvTimestamp"
+                    app:layout_constraintWidth_percent="0.57" />
+
+                <TextView
+                    android:id="@+id/tvLatitude"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:gravity="start"
+                    android:text="—"
+                    android:textSize="19sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/lblLatitude"
+                    app:layout_constraintTop_toBottomOf="@id/tvTimestamp"
+                    app:layout_constraintWidth_percent="0.55" />
+
+                <!-- Row 3: Longitude -->
+                <TextView
+                    android:id="@+id/lblLongitude"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:gravity="end"
+                    android:text="Longitude: "
+                    android:textSize="19sp"
+                    app:layout_constraintBaseline_toBaselineOf="@id/tvLongitude"
+                    app:layout_constraintEnd_toStartOf="@id/tvLongitude"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvLatitude"
+                    app:layout_constraintWidth_percent="0.57" />
+
+                <TextView
+                    android:id="@+id/tvLongitude"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:gravity="start"
+                    android:text="—"
+                    android:textSize="19sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/lblLongitude"
+                    app:layout_constraintTop_toBottomOf="@id/tvLatitude"
+                    app:layout_constraintWidth_percent="0.55" />
+
+                <!-- Row 4: Accel X -->
+                <TextView
+                    android:id="@+id/lblAccelX"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:gravity="end"
+                    android:text="Accelerometer x-axis: "
+                    android:textSize="19sp"
+                    app:layout_constraintBaseline_toBaselineOf="@id/tvAccelX"
+                    app:layout_constraintEnd_toStartOf="@id/tvAccelX"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvLongitude"
+                    app:layout_constraintWidth_percent="0.57" />
+
+                <TextView
+                    android:id="@+id/tvAccelX"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:gravity="start"
+                    android:text="—"
+                    android:textSize="19sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/lblAccelX"
+                    app:layout_constraintTop_toBottomOf="@id/tvLongitude"
+                    app:layout_constraintWidth_percent="0.55" />
+
+                <!-- Row 5: Accel Y -->
+                <TextView
+                    android:id="@+id/lblAccelY"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:gravity="end"
+                    android:text="Accelerometer y-axis: "
+                    android:textSize="19sp"
+                    app:layout_constraintBaseline_toBaselineOf="@id/tvAccelY"
+                    app:layout_constraintEnd_toStartOf="@id/tvAccelY"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvAccelX"
+                    app:layout_constraintWidth_percent="0.57" />
+
+                <TextView
+                    android:id="@+id/tvAccelY"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:gravity="start"
+                    android:text="—"
+                    android:textSize="19sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/lblAccelY"
+                    app:layout_constraintTop_toBottomOf="@id/tvAccelX"
+                    app:layout_constraintWidth_percent="0.55" />
+
+                <!-- Row 6: Accel Z -->
+                <TextView
+                    android:id="@+id/lblAccelZ"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:gravity="end"
+                    android:text="Accelerometer z-axis: "
+                    android:textSize="19sp"
+                    app:layout_constraintBaseline_toBaselineOf="@id/tvAccelZ"
+                    app:layout_constraintEnd_toStartOf="@id/tvAccelZ"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvAccelY"
+                    app:layout_constraintWidth_percent="0.57" />
+
+                <TextView
+                    android:id="@+id/tvAccelZ"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:gravity="start"
+                    android:text="—"
+                    android:textSize="19sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/lblAccelZ"
+                    app:layout_constraintTop_toBottomOf="@id/tvAccelY"
+                    app:layout_constraintWidth_percent="0.55" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Guideline to keep buttons visually below metadata block -->
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/buttonsGuideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.78" />
+
+            <Button
+                android:id="@+id/btnGet"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_marginTop="38dp"
+                android:minHeight="56dp"
+                android:text="Get"
+                android:textSize="22sp"
+                app:layout_constraintEnd_toStartOf="@id/btnClear"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/metadataContainer"
+                app:layout_constraintWidth_percent="0.48" />
+
+            <Button
+                android:id="@+id/btnClear"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_marginTop="38dp"
+                android:minHeight="56dp"
+                android:text="Clear"
+                android:textSize="22sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/btnGet"
+                app:layout_constraintTop_toBottomOf="@id/metadataContainer"
+                app:layout_constraintWidth_percent="0.48" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/tvError"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:gravity="start|top"
+            android:textColor="#D32F2F"
+            android:textSize="17sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.34"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/topSection" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

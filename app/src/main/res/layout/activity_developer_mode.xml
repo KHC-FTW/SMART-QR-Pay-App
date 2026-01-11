@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tvHeader"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="18dp"
+        android:text="Developer Mode"
+        android:textColor="@android:color/white"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginEnd="10dp"
+        android:backgroundTint="@android:color/transparent"
+        android:minWidth="64dp"
+        android:minHeight="40dp"
+        android:paddingHorizontal="8dp"
+        android:text=" &lt; Back "
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvHeader"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tvHeader" />
+
+    <ScrollView
+        android:id="@+id/scrollButtons"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvHeader">
+
+        <LinearLayout
+            android:id="@+id/buttonsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingHorizontal="28dp"
+            android:paddingTop="50dp"
+            android:paddingBottom="40dp">
+
+            <Button
+                android:id="@+id/btnTestGetMetadata"
+                android:layout_width="match_parent"
+                android:layout_height="78dp"
+                android:layout_marginBottom="34dp"
+                android:text="Test Get Metadata"
+                android:textAllCaps="false"
+                android:textSize="26sp" />
+
+            <Button
+                android:id="@+id/btnTestTransmitter"
+                android:layout_width="match_parent"
+                android:layout_height="78dp"
+                android:layout_marginBottom="34dp"
+                android:text="Test Transmitter"
+                android:textAllCaps="false"
+                android:textSize="26sp" />
+
+            <Button
+                android:id="@+id/btnTestReceiver"
+                android:layout_width="match_parent"
+                android:layout_height="78dp"
+                android:layout_marginBottom="34dp"
+                android:text="Test Receiver"
+                android:textAllCaps="false"
+                android:textSize="26sp" />
+
+            <Button
+                android:id="@+id/btnTestGenQrCode"
+                android:layout_width="match_parent"
+                android:layout_height="78dp"
+                android:layout_marginBottom="34dp"
+                android:text="Test Gen QR Code"
+                android:textAllCaps="false"
+                android:textSize="26sp" />
+
+            <Button
+                android:id="@+id/btnTestScanQrCode"
+                android:layout_width="match_parent"
+                android:layout_height="78dp"
+                android:layout_marginBottom="34dp"
+                android:text="Test Scan QR Code"
+                android:textAllCaps="false"
+                android:textSize="26sp" />
+
+            <Button
+                android:id="@+id/btnTransferMetadata"
+                android:layout_width="match_parent"
+                android:layout_height="78dp"
+                android:layout_marginBottom="34dp"
+                android:text="Transfer Metadata"
+                android:textAllCaps="false"
+                android:textSize="26sp" />
+
+            <Button
+                android:id="@+id/btnCompareMetadata"
+                android:layout_width="match_parent"
+                android:layout_height="78dp"
+                android:layout_marginBottom="34dp"
+                android:text="Compare Metadata"
+                android:textAllCaps="false"
+                android:textSize="26sp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
