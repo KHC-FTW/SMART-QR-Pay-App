@@ -31,6 +31,7 @@ public class TopUpActivity extends AppCompatActivity {
 
     private TextView tvAmountValue;
     private Button btnTopUp;
+    private UserProfile userProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,14 +47,15 @@ public class TopUpActivity extends AppCompatActivity {
         tvAmountValue = findViewById(R.id.tvAmountValue);
         btnTopUp = findViewById(R.id.btnTopUp);
         btnTopUp.setOnClickListener(v -> handleTopUp());
+        userProfile = UserProfile.getInstance();
         setupKeypadListeners();
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
 
     }
 
     private void handleTopUp() {
-        if(NetworkClient.IS_AVAILABLE){
-            String bearerToken = "Bearer " + UserProfile.getInstance().getJwt();
+        if(userProfile.isOnline()){
+            String bearerToken = "Bearer " + userProfile.getJwt();
             String topUpAmount = safeText(tvAmountValue);
             if(topUpAmount.isBlank()){
                 String errorMsg = "Fail to retrieve top up value. Please re-try.";

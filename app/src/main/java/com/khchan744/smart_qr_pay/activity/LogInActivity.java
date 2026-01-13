@@ -5,10 +5,13 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -33,6 +36,7 @@ public class LogInActivity extends AppCompatActivity {
     private TextInputEditText etPassword;
     private Button btnLogIn;
     private Button btnRegister;
+    private SwitchCompat onOfflineSwitch;
 
     private boolean usernameValid = false;
     private boolean passwordValid = false;
@@ -54,6 +58,7 @@ public class LogInActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         btnLogIn = findViewById(R.id.btnLogin);
         btnRegister = findViewById(R.id.btnRegister);
+        onOfflineSwitch = findViewById(R.id.onOfflineSwitch);
 
         userProfile = UserProfile.getInstance();
 
@@ -61,6 +66,17 @@ public class LogInActivity extends AppCompatActivity {
             handleLogIn();});
         btnRegister.setOnClickListener(v -> {
             handleClickRegistration();});
+
+        onOfflineSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(@NonNull CompoundButton compoundButton, boolean isChecked) {
+                if(isChecked){
+                    onOfflineSwitch.setText("Online\nMode");
+                }else{
+                    onOfflineSwitch.setText("Offline\nMode");
+                }
+            }
+        });
 
         TextWatcher inputWatcher = new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -78,6 +94,7 @@ public class LogInActivity extends AppCompatActivity {
     protected void onResume(){
         super.onResume();
         etUsername.setText(""); etPassword.setText("");
+        onOfflineSwitch.setChecked(true);
     }
 
     private void validateInputs() {
@@ -95,9 +112,10 @@ public class LogInActivity extends AppCompatActivity {
 
     private void handleLogIn(){
         btnLogIn.setEnabled(false);
+        userProfile.setIsOnline(onOfflineSwitch.isChecked());
         String username = etUsername.getText() != null ? etUsername.getText().toString() : "";
         userProfile.setUsername(username);
-        if(NetworkClient.IS_AVAILABLE){
+        if(userProfile.isOnline()){
             String password = etPassword.getText() != null ? etPassword.getText().toString() : "";
             CredentialsReqDto request = new CredentialsReqDto(username, password);
             NetworkClient.getAuthApi().logIn(request).enqueue(new Callback<LoginRespDto>() {
@@ -149,7 +167,7 @@ public class LogInActivity extends AppCompatActivity {
 
 
         }else{
-            // credentials.setHashedPw(GlobalConst.TEST_HASHED_PW);
+            // offline mode, no need to verify password
             Toast.makeText(this, "Log in success!", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, MainMenuActivity.class));
         }

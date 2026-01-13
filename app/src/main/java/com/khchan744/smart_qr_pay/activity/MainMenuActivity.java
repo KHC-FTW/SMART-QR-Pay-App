@@ -107,7 +107,7 @@ public class MainMenuActivity extends AppCompatActivity {
     }
 
     private void getBalance(){
-        if(NetworkClient.IS_AVAILABLE){
+        if(userProfile.isOnline()){
             String bearerToken = "Bearer " + userProfile.getJwt();
             NetworkClient.getAuthApi().getBalance(bearerToken).enqueue(new Callback<StandardRespDto>() {
                 @Override

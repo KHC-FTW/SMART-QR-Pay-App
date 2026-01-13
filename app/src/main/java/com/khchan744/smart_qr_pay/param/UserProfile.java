@@ -6,6 +6,7 @@ public class UserProfile {
     private String jwt;
     private String secret;
     private byte[] secretBytes;
+    private boolean isOnline = true;
 
     /*private boolean isUsernameNotSet = true;
     private boolean isJwtNotSet = true;
@@ -50,9 +51,16 @@ public class UserProfile {
         this.secretBytes = secretBytes;
     }
 
+    public boolean isOnline(){return isOnline;}
+    public void setIsOnline(boolean isOnline){
+        this.isOnline = isOnline;
+    }
+
     public void reset(){
         this.username = null;
         this.jwt = null;
         this.secret = null;
+        this.secretBytes = null;
+        this.isOnline = true;
     }
 }

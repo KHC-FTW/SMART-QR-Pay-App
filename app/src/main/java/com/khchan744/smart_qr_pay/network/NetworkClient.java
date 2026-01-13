@@ -12,8 +12,6 @@ public final class NetworkClient {
     // but your server is in LAN so we use its IP directly.
     private static final String BASE_URL = "http://192.168.0.104:8080";
 
-    public static final boolean IS_AVAILABLE = true;
-
     private static volatile Retrofit retrofit;
 
     private NetworkClient() {

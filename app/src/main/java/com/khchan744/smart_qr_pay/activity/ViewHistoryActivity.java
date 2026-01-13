@@ -31,6 +31,7 @@ import retrofit2.Response;
 public class ViewHistoryActivity extends AppCompatActivity {
     private TextView tvRecordCount;
     private ListView lvItem;
+    private UserProfile userProfile;
 
     /*
      * Custom adapter for history records
@@ -80,6 +81,7 @@ public class ViewHistoryActivity extends AppCompatActivity {
 
         tvRecordCount = findViewById(R.id.tvRecordCount);
         lvItem = findViewById(R.id.lvItem);
+        userProfile = UserProfile.getInstance();
 
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
 
@@ -87,8 +89,8 @@ public class ViewHistoryActivity extends AppCompatActivity {
     }
 
     private void handleGetHistory(){
-        if(NetworkClient.IS_AVAILABLE){
-            String bearerToken = "Bearer " + UserProfile.getInstance().getJwt();
+        if(userProfile.isOnline()){
+            String bearerToken = "Bearer " + userProfile.getJwt();
             NetworkClient.getAuthApi().getHistory(bearerToken).enqueue(new Callback<HistoryRespDto>() {
                 @Override
                 public void onResponse(Call<HistoryRespDto> call, Response<HistoryRespDto> response) {

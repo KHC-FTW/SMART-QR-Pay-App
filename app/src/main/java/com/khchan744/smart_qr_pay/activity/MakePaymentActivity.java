@@ -206,7 +206,7 @@ public class MakePaymentActivity extends AppCompatActivity implements Metadata.M
             try {
                 payloads = Payload.rawInputsToPayloads(
                         userProfile.getUsername(),
-                        NetworkClient.IS_AVAILABLE ? userProfile.getSecretBytes() : GlobalConst.TEST_SECRET,
+                        userProfile.isOnline() ? userProfile.getSecretBytes() : GlobalConst.TEST_SECRET,
                         paymentAmount[0], paymentAmount[1],
                         cachedTimeMs, cachedLatitude, cachedLongitude,
                         cachedAccelX, cachedAccelY, cachedAccelZ

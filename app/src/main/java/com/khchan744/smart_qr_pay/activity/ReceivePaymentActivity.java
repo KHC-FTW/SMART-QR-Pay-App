@@ -271,7 +271,7 @@ public class ReceivePaymentActivity extends AppCompatActivity implements QrScann
             byte[] payeeMetadataFingerprintBytes = recoveredSecrets.get(Payload.MF_KEY);
 
 
-            if(NetworkClient.IS_AVAILABLE){
+            if(userProfile.isOnline()){
                 String paymentToken = Format.base64Encode(payerPaymentToken);
                 String payerUsername = new String(payerUidBytes, StandardCharsets.UTF_8);
                 String paymentAmount = String.format(Locale.US, "%.1f", Payload.bytesToPaymentAmount(payerPaymentAmountBytes));
