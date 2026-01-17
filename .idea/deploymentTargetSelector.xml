@@ -28,10 +28,10 @@
       </SelectionState>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-01-04T14:54:48.764580700Z">
+        <DropdownSelection timestamp="2026-01-15T08:33:38.258583Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=RFCR305F08E" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=056a1aa60405" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -60,6 +60,9 @@
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="ViewHistoryActivity (1)">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="timeFromMetadataToPayloads()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

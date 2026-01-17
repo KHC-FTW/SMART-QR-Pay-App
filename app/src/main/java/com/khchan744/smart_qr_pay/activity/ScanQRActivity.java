@@ -72,6 +72,7 @@ public class ScanQRActivity extends AppCompatActivity implements QrScanner.QrSca
             startActivity(new Intent(this, DeveloperModeActivity.class));
             finish();
         });
+        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
 
         qrScanner = new QrScanner(this, previewView, this);
 

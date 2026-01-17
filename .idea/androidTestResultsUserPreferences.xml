@@ -30,6 +30,21 @@
             </AndroidTestResultsTableState>
           </value>
         </entry>
+        <entry key="872001595">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Pixel_3a" value="120" />
+                  <entry key="Tests" value="360" />
+                  <entry key="Xiaomi M2003J15SC" value="120" />
+                  <entry key="samsung SM-G7810" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
       </map>
     </option>
   </component>

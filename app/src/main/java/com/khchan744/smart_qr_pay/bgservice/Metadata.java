@@ -10,6 +10,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Looper;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -25,14 +26,14 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Metadata implements SensorEventListener {
 
-    public static final int TIME_MS_TOL = 15000;
+    public static final int TIME_MS_TOL = 10000;
     public static final boolean TIME_IS_TWO_SIDED = false;
-    public static final double LATITUDE_TOL = 0.00005;
-    public static final double LONGITUDE_TOL = 0.00005;
+    public static final double LATITUDE_TOL = 0.000066;
+    public static final double LONGITUDE_TOL = 0.00025;
     public static final boolean LOCATION_IS_TWO_SIDED = true;
-    public static final float X_AXIS_TOL = 1.5f;
-    public static final float Y_AXIS_TOL = 1.5f;
-    public static final float Z_AXIS_TOL = 1.5f;
+    public static final float X_AXIS_TOL = 1.2f;
+    public static final float Y_AXIS_TOL = 0.96f;
+    public static final float Z_AXIS_TOL = 0.97f;
     public static final boolean ACCEL_IS_TWO_SIDED = true;
 
     private static final int REQUEST_LOCATION_PERM = 1001;

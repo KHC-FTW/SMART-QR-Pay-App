@@ -4,6 +4,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,7 +45,7 @@ import retrofit2.Response;
 public class ReceivePaymentActivity extends AppCompatActivity implements QrScanner.QrScannerCallback, QuietReceiver.ReceiverCallback, Metadata.MetadataCallback {
 
     private static final int BUFFER_SIZE = 1024;
-    private static final long METADATA_COLLECTION_DELAY = 2000L;
+    private static final long METADATA_COLLECTION_DELAY = 1500L;
 
     private enum State {
         SCANNING,
@@ -103,7 +104,7 @@ public class ReceivePaymentActivity extends AppCompatActivity implements QrScann
 
         userProfile = UserProfile.getInstance();
 
-        startScanningAndReceiving();
+        // startScanningAndReceiving();
     }
 
     private void startScanningAndReceiving() {
@@ -315,7 +316,6 @@ public class ReceivePaymentActivity extends AppCompatActivity implements QrScann
                     tvReceivePaymentResults.setText("Receive payment failure: invalid payment token.");
                 }
             }
-
         } catch (Exception e) {
             tvReceivePaymentResults.setText(e.getMessage());
         }

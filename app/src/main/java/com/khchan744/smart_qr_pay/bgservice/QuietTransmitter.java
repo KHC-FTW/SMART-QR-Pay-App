@@ -1,6 +1,7 @@
 package com.khchan744.smart_qr_pay.bgservice;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 

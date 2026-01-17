@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -39,7 +40,7 @@ public class MakePaymentActivity extends AppCompatActivity implements Metadata.M
     private static final int MAX_TOTAL_CHARS = 6;     // e.g. 9999.9
     private static final int MAX_INT_DIGITS = 4;      // 0 - 9999
     private static final int MAX_DEC_DIGITS = 1;      // 0 - 9
-    private static final int METADATA_COLLECTION_INTERVAL_MS = 1250;
+    private static final int METADATA_COLLECTION_INTERVAL_MS = 1000;
     private static final int AUDIO_TRANSMISSION_DELAY_MS = 1800;
 
     private static final long METADATA_COLLECTION_DELAY = 700L;
