@@ -19,87 +19,14 @@ public class FuzzyVault {
 
     private static final Random random = new Random();
 
-
-    public static int evaluatePolynomial(int[] coefficients, int x){
-        long y = 0;
-        long xPower = 1;
-        for (int coefficient : coefficients) {
-            y = (y + coefficient * xPower) % PRIME;
-            xPower = (xPower * x) % PRIME;
+    public static int[][] generateGenuineSet(@NonNull int[] coefficients, @NonNull int[] genuinePointsX){
+        int[][] genuineSet = new int[2][genuinePointsX.length];
+        for (int i = 0; i < genuinePointsX.length; i++){
+            int y = evaluatePolynomial(coefficients, genuinePointsX[i]);
+            genuineSet[0][i] = genuinePointsX[i];
+            genuineSet[1][i] = y;
         }
-        return (int)y;
-    }
-
-    @Deprecated
-    public static int[][] generateChaffSetV1(@NonNull int[] coefficients,
-                                             @NonNull int[] genuinePointsX,
-                                             @NonNull Integer chaffSize){
-        int[][] chaffSet = new int[2][chaffSize];
-        final int finiteFieldSize = FINITE_FIELD_MAX_VAL + 1;
-        List<Integer> candidateChaffX = new ArrayList<>(finiteFieldSize);
-        for (int i = 0; i < finiteFieldSize; i++) {
-            candidateChaffX.add(i);
-        }
-        for (int pointsX : genuinePointsX) {
-            candidateChaffX.remove(pointsX);
-        }
-
-        int done = 0;
-        do{
-            int randomIdx = generateRandomInt(candidateChaffX.size());
-            int chaff_x = candidateChaffX.get(randomIdx);
-            chaffSet[0][done] = chaff_x;
-            candidateChaffX.remove(chaff_x);
-
-            int unwanted_y = evaluatePolynomial(coefficients, chaff_x);
-            do {
-                int chaff_y = generateRandomInt(finiteFieldSize);
-                if (chaff_y != unwanted_y){
-                    chaffSet[1][done++] = chaff_y;
-                    break;
-                }
-            }while(true);
-
-        }while(done < chaffSize);
-
-        return chaffSet;
-    }
-
-    @Deprecated
-    public static int[][] generateChaffSetV2(@NonNull int[] coefficients,
-                                             @NonNull int[] genuinePointsX,
-                                             @NonNull Integer chaffSize){
-        int[][] chaffSet = new int[2][chaffSize];
-        final int finiteFieldSize = FINITE_FIELD_MAX_VAL + 1;
-        List<Integer> excludedX = new ArrayList<>(genuinePointsX.length + chaffSize);
-        for(int x : genuinePointsX) {
-            excludedX.add(x);
-        }
-
-        int done = 0;
-        do{
-            do{
-                int randomX = generateRandomInt(finiteFieldSize);
-                if(!excludedX.contains(randomX)) {
-                    chaffSet[0][done] = randomX;
-                    excludedX.add(randomX);
-                    break;
-                }
-            }while(true);
-
-            int chaff_x = chaffSet[0][done];
-            int unwanted_y = evaluatePolynomial(coefficients, chaff_x);
-            do {
-                int chaff_y = generateRandomInt(finiteFieldSize);
-                if (chaff_y != unwanted_y){
-                    chaffSet[1][done++] = chaff_y;
-                    break;
-                }
-            }while(true);
-
-        }while(done < chaffSize);
-
-        return chaffSet;
+        return genuineSet;
     }
 
     public static int[][] generateChaffSetV3(@NonNull int[] coefficients,
@@ -141,14 +68,14 @@ public class FuzzyVault {
         return chaffSet;
     }
 
-    public static int[][] generateGenuineSet(@NonNull int[] coefficients, @NonNull int[] genuinePointsX){
-        int[][] genuineSet = new int[2][genuinePointsX.length];
-        for (int i = 0; i < genuinePointsX.length; i++){
-            int y = evaluatePolynomial(coefficients, genuinePointsX[i]);
-            genuineSet[0][i] = genuinePointsX[i];
-            genuineSet[1][i] = y;
+    public static int evaluatePolynomial(int[] coefficients, int x){
+        long y = 0;
+        long xPower = 1;
+        for (int coefficient : coefficients) {
+            y = (y + coefficient * xPower) % PRIME;
+            xPower = (xPower * x) % PRIME;
         }
-        return genuineSet;
+        return (int)y;
     }
 
     public static int[][] generateFuzzyVault(@NonNull int[][] genuineSet, @NonNull int[][] chaffSet){
@@ -268,22 +195,8 @@ public class FuzzyVault {
         if (coeffCnt == 0) {
             throw new IllegalArgumentException("Need at least 1 point to interpolate");
         }
-
-        // Normalize inputs and validate distinct x.
-        /*int[] x = new int[k];
-        int[] y = new int[k];
-        HashSet<Integer> seenX = new HashSet<>(k * 2);
-        for (int i = 0; i < k; i++) {
-            x[i] = mod(xPoints[i]);
-            y[i] = mod(yPoints[i]);
-            if (!seenX.add(x[i])) {
-                throw new IllegalArgumentException("Duplicate x value detected (mod PRIME): " + x[i]);
-            }
-        }*/
-
         // Result degree is at most (k-1) with k points.
         int[] coeffResults = new int[coeffCnt];
-
         // For each point i, build the basis polynomial:
         //   L_i(t) = Π_{j!=i} (t - x_j) / (x_i - x_j)
         // in coefficient form (degree k-1), then scale by y_i and accumulate.
@@ -296,15 +209,9 @@ public class FuzzyVault {
                     denomProduct = Arithmetic.mulMod(denomProduct, diff, PRIME);
                 }
             }
-            /*if (denom == 0) {
-                // Should only happen with duplicate x.
-                throw new IllegalArgumentException("Interpolation failed due to zero denominator at i=" + i);
-            }*/
-
             // y_i * inv(Σ_{j!=i} (x_i - x_j)) (y_i times one over summation of denominators)
             int denomInverse = Arithmetic.invMod(denomProduct, PRIME);
             int productOfYAndDenom = Arithmetic.mulMod(yPoints[i], denomInverse, PRIME);
-
             // Build numerator polynomial N(t) = Π_{j!=i} (t - x_j)
             // Start with N(t)=1
             int[] numeratorCoeff = new int[1];
@@ -316,14 +223,12 @@ public class FuzzyVault {
                     numeratorCoeff = multiplyByMonicLinear(numeratorCoeff, moddedConst);
                 }
             }
-
             // Accumulate productOfYAndDenom * numeratorCoeff into result
             for (int d = 0; d < numeratorCoeff.length; d++) {
                 int finalProduct = Arithmetic.mulMod(numeratorCoeff[d], productOfYAndDenom, PRIME);
                 coeffResults[d] = Arithmetic.addMod(coeffResults[d], finalProduct, PRIME);
             }
         }
-
         return coeffResults;
     }
 
@@ -349,11 +254,82 @@ public class FuzzyVault {
         return random.nextInt(max);
     }
 
+    /*
+    * Deprecated methods below
+    * */
+    @Deprecated
+    public static int[][] generateChaffSetV1(@NonNull int[] coefficients,
+                                             @NonNull int[] genuinePointsX,
+                                             @NonNull Integer chaffSize){
+        int[][] chaffSet = new int[2][chaffSize];
+        final int finiteFieldSize = FINITE_FIELD_MAX_VAL + 1;
+        List<Integer> candidateChaffX = new ArrayList<>(finiteFieldSize);
+        for (int i = 0; i < finiteFieldSize; i++) {
+            candidateChaffX.add(i);
+        }
+        for (int pointsX : genuinePointsX) {
+            candidateChaffX.remove(pointsX);
+        }
+
+        int done = 0;
+        do{
+            int randomIdx = generateRandomInt(candidateChaffX.size());
+            int chaff_x = candidateChaffX.get(randomIdx);
+            chaffSet[0][done] = chaff_x;
+            candidateChaffX.remove(chaff_x);
+
+            int unwanted_y = evaluatePolynomial(coefficients, chaff_x);
+            do {
+                int chaff_y = generateRandomInt(finiteFieldSize);
+                if (chaff_y != unwanted_y){
+                    chaffSet[1][done++] = chaff_y;
+                    break;
+                }
+            }while(true);
+
+        }while(done < chaffSize);
+
+        return chaffSet;
+    }
+
+    @Deprecated
+    public static int[][] generateChaffSetV2(@NonNull int[] coefficients,
+                                             @NonNull int[] genuinePointsX,
+                                             @NonNull Integer chaffSize){
+        int[][] chaffSet = new int[2][chaffSize];
+        final int finiteFieldSize = FINITE_FIELD_MAX_VAL + 1;
+        List<Integer> excludedX = new ArrayList<>(genuinePointsX.length + chaffSize);
+        for(int x : genuinePointsX) {
+            excludedX.add(x);
+        }
+
+        int done = 0;
+        do{
+            do{
+                int randomX = generateRandomInt(finiteFieldSize);
+                if(!excludedX.contains(randomX)) {
+                    chaffSet[0][done] = randomX;
+                    excludedX.add(randomX);
+                    break;
+                }
+            }while(true);
+
+            int chaff_x = chaffSet[0][done];
+            int unwanted_y = evaluatePolynomial(coefficients, chaff_x);
+            do {
+                int chaff_y = generateRandomInt(finiteFieldSize);
+                if (chaff_y != unwanted_y){
+                    chaffSet[1][done++] = chaff_y;
+                    break;
+                }
+            }while(true);
+
+        }while(done < chaffSize);
+
+        return chaffSet;
+    }
 
     private FuzzyVault(){
 
     }
-
-
-
 }

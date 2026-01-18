@@ -24,32 +24,11 @@ public class QrGen {
         GrayU8 grayImage = generator.render(original).getGray();
 
         // 3. Convert the BoofCV image (GrayU8) to an Android Bitmap
-        // You'll need a utility function for this conversion, as BoofCV
-        // does not have direct Bitmap conversion built-in to its core library.
-        // A simple conversion can be implemented as shown below.
-        // return convertGrayU8ToBitmap(grayImage);
         Bitmap bitmap = Bitmap.createBitmap(grayImage.width, grayImage.height, Bitmap.Config.ARGB_8888);
         ConvertBitmap.grayToBitmap(grayImage, bitmap, null);
         return bitmap;
     }
 
-    // Utility function to convert BoofCV GrayU8 to Android Bitmap
-    /*private static Bitmap convertGrayU8ToBitmap(GrayU8 gray) {
-        int width = gray.width;
-        int height = gray.height;
-        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-
-        // Iterate over pixels and set them in the Bitmap
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                int value = gray.get(x, y) & 0xFF;
-                // QR codes use black for modules (data) and white for background
-                int color = value == 0 ? 0xFF000000 : 0xFFFFFFFF;
-                bitmap.setPixel(x, y, color);
-            }
-        }
-        return bitmap;
-    }*/
     private QrGen(){
 
     }

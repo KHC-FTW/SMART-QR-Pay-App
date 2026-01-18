@@ -8,6 +8,7 @@ import com.khchan744.smart_qr_pay.param.GlobalConst;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.crypto.SecretKey;
@@ -43,39 +44,9 @@ public class Payload {
     public static final String PAYLOAD_SET_1_KEY = "payloadSet1";
     public static final String PAYLOAD_SET_2_KEY = "payloadSet2";
 
-    @Deprecated
-    public static byte[] offsetValueToTwoBytes(double offset){
-        boolean positive = offset >= 0;
-        String val = String.format("%.4f", offset);
-        val = positive ? val.substring(2) : val.substring(3);
-        int value = Integer.parseInt(val);
-        byte[] result = Format.oneDecimalToTwoBytes(value);
-        if(positive) result[0] = (byte)(result[0] | 0x80);  // add sign bit to the most significant bit
-        return result;
-    }
-
-    @Deprecated
-    public static double twoBytesToOffsetValue(byte[] offsetBytes){
-        if (offsetBytes.length != 2) {
-            throw new IllegalArgumentException("Input array must have a length of 2");
-        }
-        int sign = (offsetBytes[0] & 0xFF) >> 7;
-        boolean positive = sign == 1;
-        if (positive) offsetBytes[0] = (byte)(offsetBytes[0] & 0x7F);   // remove the sign bit
-        int value = Format.twoBytesToDecimals(offsetBytes)[0];
-        // apply 0 padding:
-        int valLen = String.valueOf(value).length();
-        StringBuilder zeros = new StringBuilder("0.");
-        for (int i = 0; i < 4 - valLen; i++){
-            zeros.append("0");
-        }
-        String result = positive ? zeros.append(value).toString() : "-" + zeros.append(value);
-        return Double.parseDouble(result);
-    }
-
     public static byte[] offsetValueToFourBytes(@NonNull Double offset){
         boolean positive = offset >= 0;
-        String val = String.format("%.9f", offset);
+        String val = String.format(Locale.US, "%.9f", offset);
         val = positive ? val.substring(2) : val.substring(3);
         int value = Integer.parseInt(val);
         byte[] offsetBytes = Format.oneDecimalToFourBytes(value);
@@ -223,7 +194,6 @@ public class Payload {
     public static boolean isPayloadSet2Valid(byte[] payloadSet2){
         return payloadSet2 != null && payloadSet2.length == PAYLOAD_SET_2_SIZE;
     }
-
 
     public static Map<String, byte[]> rawInputsToPayloads(@NonNull final String uid,
                                                           @NonNull final byte[] hashedPw,
@@ -418,6 +388,38 @@ public class Payload {
         return verifyKey2AndCrc(key2, crc);
     }
 
+    /*
+    * Deprecated methods below
+    * */
+    @Deprecated
+    public static byte[] offsetValueToTwoBytes(double offset){
+        boolean positive = offset >= 0;
+        String val = String.format("%.4f", offset);
+        val = positive ? val.substring(2) : val.substring(3);
+        int value = Integer.parseInt(val);
+        byte[] result = Format.oneDecimalToTwoBytes(value);
+        if(positive) result[0] = (byte)(result[0] | 0x80);  // add sign bit to the most significant bit
+        return result;
+    }
+
+    @Deprecated
+    public static double twoBytesToOffsetValue(byte[] offsetBytes){
+        if (offsetBytes.length != 2) {
+            throw new IllegalArgumentException("Input array must have a length of 2");
+        }
+        int sign = (offsetBytes[0] & 0xFF) >> 7;
+        boolean positive = sign == 1;
+        if (positive) offsetBytes[0] = (byte)(offsetBytes[0] & 0x7F);   // remove the sign bit
+        int value = Format.twoBytesToDecimals(offsetBytes)[0];
+        // apply 0 padding:
+        int valLen = String.valueOf(value).length();
+        StringBuilder zeros = new StringBuilder("0.");
+        for (int i = 0; i < 4 - valLen; i++){
+            zeros.append("0");
+        }
+        String result = positive ? zeros.append(value).toString() : "-" + zeros.append(value);
+        return Double.parseDouble(result);
+    }
 
     private Payload(){
 

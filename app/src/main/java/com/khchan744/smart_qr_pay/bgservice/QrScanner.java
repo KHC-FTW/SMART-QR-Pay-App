@@ -3,10 +3,8 @@ package com.khchan744.smart_qr_pay.bgservice;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -170,8 +168,12 @@ public class QrScanner {
                 .addOnCompleteListener(task -> imageProxy.close());
     }
 
+    /*
+    * Deprecated method below
+    * */
+
     // Helper method to check if the detected barcode is within the visible scan area
-    // Deprecated due to usability complexity
+    // Deprecated due to complexity in actual usage
     @Deprecated
     private boolean isBarcodeInScanArea(Rect barcodeBounds) {
         /*

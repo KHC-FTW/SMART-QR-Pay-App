@@ -26,18 +26,6 @@ public class Format {
         return result;
     }
 
-    public static int fourBytesToOneDecimal(@NonNull byte[] byteData) {
-        int len = byteData.length;
-        if (len != 4){
-            throw new IllegalArgumentException("Byte array length must be 4.");
-        }
-        int result = 0;
-        for (int i = 0, shift = 24; i < 4; i++, shift -= 8){
-            result = (byteData[i] & 0xFF) << shift | result;
-        }
-        return result;
-    }
-
     public static byte[] decimalsToTwoBytes(@NonNull int[] decimals) {
         byte[] result = new byte[decimals.length * 2];
         for (int i = 0; i < decimals.length; i++) {
@@ -55,6 +43,18 @@ public class Format {
         }
         result[0] = (byte) ((decimal >> 8) & 0xFF);  // most significant byte
         result[1] = (byte) (decimal & 0xFF); // least significant byte
+        return result;
+    }
+
+    public static int fourBytesToOneDecimal(@NonNull byte[] byteData) {
+        int len = byteData.length;
+        if (len != 4){
+            throw new IllegalArgumentException("Byte array length must be 4.");
+        }
+        int result = 0;
+        for (int i = 0, shift = 24; i < 4; i++, shift -= 8){
+            result = (byteData[i] & 0xFF) << shift | result;
+        }
         return result;
     }
 
