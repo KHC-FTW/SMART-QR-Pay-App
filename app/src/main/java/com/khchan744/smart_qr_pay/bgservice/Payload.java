@@ -285,8 +285,8 @@ public class Payload {
         int[][] fuzzyVault = FuzzyVault.generateFuzzyVault(genuineSet, chaffSet);
         byte[] fuzzyVaultBytes = FuzzyVault.flattenFuzzyVaultToBytes(fuzzyVault);
 
-        byte[] payloadSet1 = Payload.finalizePayloadSet1(fuzzyVaultBytes, encryptedPaymentToken, paBytes, uidBytes);
-        byte[] payloadSet2 = Payload.finalizePayloadSet2(encryptedKeyForPaymentToken, metadataOffsets);
+        byte[] payloadSet1 = finalizePayloadSet1(fuzzyVaultBytes, encryptedPaymentToken, paBytes, uidBytes);
+        byte[] payloadSet2 = finalizePayloadSet2(encryptedKeyForPaymentToken, metadataOffsets);
 
         return Map.of(
                 PAYLOAD_SET_1_KEY, payloadSet1,
@@ -307,21 +307,21 @@ public class Payload {
                                                                  @NonNull final Float accelY,
                                                                  @NonNull final Float accelZ) throws Exception {
 
-        Map<String, byte[]> unpackedPayloadSet2 = Payload.unpackPayloadSet2(payloadSet2);
-        byte[] encryptedKeyForPaymentToken = unpackedPayloadSet2.get(Payload.ENC_KEY_TOKEN_KEY);
-        byte[] timeOffsetBytes = unpackedPayloadSet2.get(Payload.TIME_OFFSET_KEY);
-        byte[] latitudeOffsetBytes = unpackedPayloadSet2.get(Payload.LATITUDE_OFFSET_KEY);
-        byte[] longitudeOffsetBytes = unpackedPayloadSet2.get(Payload.LONGITUDE_OFFSET_KEY);
-        byte[] accelXOffsetBytes = unpackedPayloadSet2.get(Payload.ACCEL_X_OFFSET_KEY);
-        byte[] accelYOffsetBytes = unpackedPayloadSet2.get(Payload.ACCEL_Y_OFFSET_KEY);
-        byte[] accelZOffsetBytes = unpackedPayloadSet2.get(Payload.ACCEL_Z_OFFSET_KEY);
+        Map<String, byte[]> unpackedPayloadSet2 = unpackPayloadSet2(payloadSet2);
+        byte[] encryptedKeyForPaymentToken = unpackedPayloadSet2.get(ENC_KEY_TOKEN_KEY);
+        byte[] timeOffsetBytes = unpackedPayloadSet2.get(TIME_OFFSET_KEY);
+        byte[] latitudeOffsetBytes = unpackedPayloadSet2.get(LATITUDE_OFFSET_KEY);
+        byte[] longitudeOffsetBytes = unpackedPayloadSet2.get(LONGITUDE_OFFSET_KEY);
+        byte[] accelXOffsetBytes = unpackedPayloadSet2.get(ACCEL_X_OFFSET_KEY);
+        byte[] accelYOffsetBytes = unpackedPayloadSet2.get(ACCEL_Y_OFFSET_KEY);
+        byte[] accelZOffsetBytes = unpackedPayloadSet2.get(ACCEL_Z_OFFSET_KEY);
 
-        double timeOffset = Payload.fourBytesToOffsetValue(timeOffsetBytes);
-        double latOffset = Payload.fourBytesToOffsetValue(latitudeOffsetBytes);
-        double longOffset = Payload.fourBytesToOffsetValue(longitudeOffsetBytes);
-        double accelXOffset = Payload.fourBytesToOffsetValue(accelXOffsetBytes);
-        double accelYOffset = Payload.fourBytesToOffsetValue(accelYOffsetBytes);
-        double accelZOffset = Payload.fourBytesToOffsetValue(accelZOffsetBytes);
+        double timeOffset = fourBytesToOffsetValue(timeOffsetBytes);
+        double latOffset = fourBytesToOffsetValue(latitudeOffsetBytes);
+        double longOffset = fourBytesToOffsetValue(longitudeOffsetBytes);
+        double accelXOffset = fourBytesToOffsetValue(accelXOffsetBytes);
+        double accelYOffset = fourBytesToOffsetValue(accelYOffsetBytes);
+        double accelZOffset = fourBytesToOffsetValue(accelZOffsetBytes);
 
         long quantizedTime = Arithmetic.quantizeOtherVal(
                 timestamp, Metadata.TIME_MS_TOL, Metadata.TIME_IS_TWO_SIDED, timeOffset);
@@ -341,11 +341,11 @@ public class Payload {
                 quantizedLatitude, quantizedLongitude, quantizedAccelX,
                 quantizedAccelY, quantizedAccelZ, quantizedTime);
 
-        Map<String, byte[]> unpackedPayloadSet1 = Payload.unpackPayloadSet1(payloadSet1);
-        byte[] fvBytes = unpackedPayloadSet1.get(Payload.FV_KEY);
-        byte[] encryptedPaymentToken = unpackedPayloadSet1.get(Payload.ENC_PAY_TOKEN_KEY);
-        byte[] paBytes = unpackedPayloadSet1.get(Payload.PA_KEY);
-        byte[] uidBytes = unpackedPayloadSet1.get(Payload.UID_KEY);
+        Map<String, byte[]> unpackedPayloadSet1 = unpackPayloadSet1(payloadSet1);
+        byte[] fvBytes = unpackedPayloadSet1.get(FV_KEY);
+        byte[] encryptedPaymentToken = unpackedPayloadSet1.get(ENC_PAY_TOKEN_KEY);
+        byte[] paBytes = unpackedPayloadSet1.get(PA_KEY);
+        byte[] uidBytes = unpackedPayloadSet1.get(UID_KEY);
 
         int[][] fuzzyVault = FuzzyVault.fuzzyVaultBytesToDecimalPairs(fvBytes);
         int[] genuinePointsX = Format.twoBytesToDecimals(metadataFingerprint);
@@ -356,7 +356,7 @@ public class Payload {
         System.arraycopy(key2AndCrc, 0, key2, 0, key2.length);
         byte[] crc = new byte[2];
         System.arraycopy(key2AndCrc, key2AndCrc.length - 2, crc, 0, 2);
-        if(!Payload.verifyKey2AndCrc(key2, crc)){
+        if(!verifyKey2AndCrc(key2, crc)){
             throw new PayloadException("Key2 reconstruction failed - CRC mismatch.");
         }
         SecretKey reconstructedKey2 = Crypto.secretKeyFromBytes(key2);

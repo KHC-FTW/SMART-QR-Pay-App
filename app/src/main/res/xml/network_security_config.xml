@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
 
-    <!--
-      DEV ONLY: allow HTTP (cleartext) to your local backend.
-      Keep this restrictive (domain-config) instead of enabling cleartext globally.
-    -->
     <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="false">msi</domain>
-        <domain includeSubdomains="false">192.168.0.103</domain>
-        <domain includeSubdomains="false">192.168.0.104</domain>
+        <domain includeSubdomains="false">192.168.31.182</domain>
     </domain-config>
 
 </network-security-config>
