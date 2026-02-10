@@ -6,6 +6,7 @@ import com.khchan744.smart_qr_pay.bgservice.CRC;
 import com.khchan744.smart_qr_pay.bgservice.Crypto;
 import com.khchan744.smart_qr_pay.bgservice.Format;
 import com.khchan744.smart_qr_pay.bgservice.FuzzyVault;
+import com.khchan744.smart_qr_pay.bgservice.Metadata;
 import com.khchan744.smart_qr_pay.bgservice.Payload;
 import com.khchan744.smart_qr_pay.param.GlobalConst;
 
@@ -90,14 +91,14 @@ public class IntegrationTest {
         byte[] paymentToken = Crypto.computePaymentToken(uidBytes, hashedPw, paBytes, metadataFingerprint);
 
         // Generate random key for encrypting payment token
-        SecretKey keyToken = Crypto.generateAesKey();
-        // Encrypt payment token with AES-GCM, IV is prepended to the ciphertext
-        byte[] encryptedPaymentToken = Crypto.encryptAesGcm(keyToken, paymentToken);
+        SecretKey keyEncQrCode = Crypto.generateAesKey();
+        // Concat payment token, pa, uid and encrypt the resulting payload with AES-GCM, IV is prepended to the ciphertext
+        byte[] encryptedQrPayload = Crypto.encryptAesGcm(keyEncQrCode, ArrayUtils.concatByteArrays(paymentToken, paBytes, uidBytes));
 
         // Generate another random key for encrypting the keyToken
         SecretKey keyEnc = Crypto.generateAesKey();
         // Encrypt keyToken with AES-GCM, IV is prepended to the ciphertext
-        byte[] encryptedKeyToken = Crypto.encryptAesGcm(keyEnc, keyToken.getEncoded());
+        byte[] encryptedKeyQrCode = Crypto.encryptAesGcm(keyEnc, keyEncQrCode.getEncoded());
 
         // compute CRC16 checksum for keyEnc
         byte[] keyEncBytes = keyEnc.getEncoded();
@@ -114,8 +115,8 @@ public class IntegrationTest {
         int[][] fuzzyVault = FuzzyVault.generateFuzzyVault(genuineSet, chaffSet);
         byte[] fuzzyVaultBytes = FuzzyVault.flattenFuzzyVaultToBytes(fuzzyVault);
 
-        byte[] payloadSet1 = Payload.finalizePayloadSet1(fuzzyVaultBytes, encryptedPaymentToken, paBytes, uidBytes);
-        byte[] payloadSet2 = Payload.finalizePayloadSet2(encryptedKeyToken, metadataOffsets);
+        byte[] payloadSet1 = Payload.finalizePayloadSet1(fuzzyVaultBytes, encryptedQrPayload);
+        byte[] payloadSet2 = Payload.finalizePayloadSet2(encryptedKeyQrCode, metadataOffsets);
 
         long endTime1 = System.currentTimeMillis();
 
@@ -123,15 +124,15 @@ public class IntegrationTest {
         // Assume payloadSet2 transmitted through ultrasonic audio channel and received
 
         // Collect metadata (recipient)
-        final long timestamp2 = 1766397561789L + 8412;
-        final double latitude2 = 22.2780783 - 0.00003;
-        final double longitude2 = 114.2261503 + 0.00001;
-        final float accelX2 = 0.7636095f + 0.236f;
-        final float accelY2 = 4.9725847f - 0.1293f;
-        final float accelZ2 = 7.579864f + 0.0336f;
+        final long timestamp2 = timestamp + timeTol / 2;
+        final double latitude2 = latitude - latTol / 2;
+        final double longitude2 = longitude + longTol / 2;
+        final float accelX2 = accelX + accelXTol / 2;
+        final float accelY2 = accelY - accelYTol / 2;
+        final float accelZ2 = accelZ + accelZTol / 2;
 
         Map<String, byte[]> unpackedPayloadSet2 = Payload.unpackPayloadSet2(payloadSet2);
-        byte[] ivAndEncKeyTokenBytes = unpackedPayloadSet2.get(Payload.ENC_KEY_TOKEN_KEY);
+        byte[] encryptedKeyForQrPayload = unpackedPayloadSet2.get(Payload.ENC_KEY_QR_PAYLOAD_KEY);
         byte[] timeOffsetBytes2 = unpackedPayloadSet2.get(Payload.TIME_OFFSET_KEY);
         byte[] latitudeBytes2 = unpackedPayloadSet2.get(Payload.LATITUDE_OFFSET_KEY);
         byte[] longitudeBytes2 = unpackedPayloadSet2.get(Payload.LONGITUDE_OFFSET_KEY);
@@ -159,9 +160,7 @@ public class IntegrationTest {
 
         Map<String, byte[]> unpackedPayloadSet1 = Payload.unpackPayloadSet1(payloadSet1);
         byte[] fvBytes = unpackedPayloadSet1.get(Payload.FV_KEY);
-        byte[] ivAndEncryptedTokenBytes = unpackedPayloadSet1.get(Payload.ENC_PAY_TOKEN_KEY);
-        byte[] paBytes2 = unpackedPayloadSet1.get(Payload.PA_KEY);
-        byte[] uidBytes2 = unpackedPayloadSet1.get(Payload.UID_KEY);
+        byte[] ivAndEncryptedQrPayloadBytes = unpackedPayloadSet1.get(Payload.ENC_QR_PAYLOAD);
 
         int[][] fuzzyVault2 = FuzzyVault.fuzzyVaultBytesToDecimalPairs(fvBytes);
         int[] genuinePointsX2 = Format.twoBytesToDecimals(metadataFingerprint2);
@@ -176,10 +175,16 @@ public class IntegrationTest {
         Assert.assertArrayEquals(checksum, recomputedChecksum);
 
         SecretKey reconstructedKeyEnc = Crypto.secretKeyFromBytes(keyEncBytes2);
-        byte[] decryptedTokenKeyBytes = Crypto.decryptAesGcm(reconstructedKeyEnc, ivAndEncKeyTokenBytes);
-        SecretKey decryptedKeyToken =  Crypto.secretKeyFromBytes(decryptedTokenKeyBytes);
-
-        byte[] decryptedPaymentToken = Crypto.decryptAesGcm(decryptedKeyToken, ivAndEncryptedTokenBytes);
+        byte[] decryptedQrPayloadKeyBytes = Crypto.decryptAesGcm(reconstructedKeyEnc, encryptedKeyForQrPayload);
+        SecretKey decryptedQrPayloadKey =  Crypto.secretKeyFromBytes(decryptedQrPayloadKeyBytes);
+        byte[] decryptedQrPayload = Crypto.decryptAesGcm(decryptedQrPayloadKey, ivAndEncryptedQrPayloadBytes);
+        // | payment token | pa | uid |
+        byte[] decryptedPaymentToken = new byte[Payload.PAYMENT_TOKEN_BYTE_SIZE];
+        byte[] paBytes2 = new byte[Payload.PA_BYTE_SIZE];
+        byte[] uidBytes2 = new byte[decryptedQrPayload.length - Payload.PAYMENT_TOKEN_BYTE_SIZE - Payload.PA_BYTE_SIZE];
+        System.arraycopy(decryptedQrPayload, 0, decryptedPaymentToken, 0, Payload.PAYMENT_TOKEN_BYTE_SIZE);
+        System.arraycopy(decryptedQrPayload, Payload.PAYMENT_TOKEN_BYTE_SIZE, paBytes2, 0, Payload.PA_BYTE_SIZE);
+        System.arraycopy(decryptedQrPayload, Payload.PAYMENT_TOKEN_BYTE_SIZE + Payload.PA_BYTE_SIZE, uidBytes2, 0, uidBytes2.length);
 
         byte[] recomputedPaymentToken = Crypto.computePaymentToken(uidBytes2, hashedPw, paBytes2, metadataFingerprint2);
 
@@ -224,12 +229,12 @@ public class IntegrationTest {
         * */
 
         // Collect metadata (recipient)
-        final long timestamp2 = timestamp + 8412;
-        final double latitude2 = latitude - 30.94233;
-        final double longitude2 = longitude + 43.00001;
-        final float accelX2 = accelX + 5.236f;
-        final float accelY2 = accelY - 2.1293f;
-        final float accelZ2 = accelZ + 9.0336f;
+        final long timestamp2 = timestamp + Metadata.TIME_MS_TOL / 2;
+        final double latitude2 = latitude - Metadata.LATITUDE_TOL / 2;
+        final double longitude2 = longitude + Metadata.LONGITUDE_TOL / 2;
+        final float accelX2 = accelX + Metadata.X_AXIS_TOL / 2;
+        final float accelY2 = accelY - Metadata.Y_AXIS_TOL / 2;
+        final float accelZ2 = accelZ + Metadata.Z_AXIS_TOL / 2;
 
         Map<String, byte[]> recoveredSecrets = Payload.recoverSecretsFromPayloads(
                 payloadSet1, payloadSet2, timestamp2, latitude2, longitude2,
@@ -276,12 +281,12 @@ public class IntegrationTest {
          * */
 
         // Collect metadata (recipient)
-        final long timestamp2 = 1767332930953L;
-        final double latitude2 = 22.2780815;
-        final double longitude2 = 114.226173;
-        final float accelX2 = -0.5165506f;
-        final float accelY2 = 1.3073785f;
-        final float accelZ2 = 9.663713f;
+        final long timestamp2 = timestamp + Metadata.TIME_MS_TOL / 2;
+        final double latitude2 = latitude - Metadata.LATITUDE_TOL / 2;
+        final double longitude2 = longitude + Metadata.LONGITUDE_TOL / 2;
+        final float accelX2 = accelX + Metadata.X_AXIS_TOL / 2;
+        final float accelY2 = accelY - Metadata.Y_AXIS_TOL / 2;
+        final float accelZ2 = accelZ + Metadata.Z_AXIS_TOL / 2;
 
         Map<String, byte[]> recoveredSecrets = Payload.recoverSecretsFromPayloads(
                 payloadSet1, payloadSet2, timestamp2, latitude2, longitude2,

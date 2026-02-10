@@ -20,14 +20,14 @@ public class Payload {
     * */
 
     public static final int FV_BYTE_SIZE = FuzzyVault.FUZZY_VAULT_SIZE * 4;
-    public static final int ENC_PAYMENT_TOKEN_BYTE_SIZE = Crypto.GCM_IV_LENGTH_BYTES + Crypto.GCM_TAG_LENGTH_BYTES + 32; // SHA-256 token size
-    public static final int ENC_KEY_TOKEN_BYTE_SIZE = Crypto.GCM_IV_LENGTH_BYTES + Crypto.GCM_TAG_LENGTH_BYTES + 16; // AES-128 key size
+    public static final int PAYMENT_TOKEN_BYTE_SIZE = 32; // SHA-256 token size
+    public static final int ENC_KEY_QR_PAYLOAD_BYTE_SIZE = Crypto.GCM_IV_LENGTH_BYTES + Crypto.GCM_TAG_LENGTH_BYTES + 16; // AES-128 key size
     public static final int PA_BYTE_SIZE = 3; // 2 bytes for integer, 1 byte for fraction
     public static final int OFFSET_BYTE_SIZE = 4;
-    public static final int PAYLOAD_SET_1_MIN_SIZE = FV_BYTE_SIZE + ENC_PAYMENT_TOKEN_BYTE_SIZE + PA_BYTE_SIZE;
-    public static final int PAYLOAD_SET_1_MAX_SIZE = FV_BYTE_SIZE + ENC_PAYMENT_TOKEN_BYTE_SIZE + PA_BYTE_SIZE + GlobalConst.UID_MAX_LEN;
-    public static final int PAYLOAD_SET_2_SIZE = ENC_KEY_TOKEN_BYTE_SIZE + OFFSET_BYTE_SIZE * 6;
-    public static final String ENC_KEY_TOKEN_KEY = "encryptedKeyToken";
+    public static final int PAYLOAD_SET_1_MIN_SIZE = FV_BYTE_SIZE + Crypto.GCM_IV_LENGTH_BYTES + Crypto.GCM_TAG_LENGTH_BYTES + PAYMENT_TOKEN_BYTE_SIZE + PA_BYTE_SIZE + 1;
+    public static final int PAYLOAD_SET_1_MAX_SIZE = PAYLOAD_SET_1_MIN_SIZE - 1 + GlobalConst.UID_MAX_LEN;
+    public static final int PAYLOAD_SET_2_SIZE = ENC_KEY_QR_PAYLOAD_BYTE_SIZE + OFFSET_BYTE_SIZE * 6;
+    public static final String ENC_KEY_QR_PAYLOAD_KEY = "encryptedKeyQrPayload";
     public static final String TIME_OFFSET_KEY = "timeOffset";
     public static final String LATITUDE_OFFSET_KEY = "latitudeOffset";
     public static final String LONGITUDE_OFFSET_KEY = "longitudeOffset";
@@ -35,7 +35,7 @@ public class Payload {
     public static final String ACCEL_Y_OFFSET_KEY = "accelYOffset";
     public static final String ACCEL_Z_OFFSET_KEY = "accelZOffset";
     public static final String FV_KEY = "fv";
-    public static final String ENC_PAY_TOKEN_KEY = "encryptedPaymentToken";
+    public static final String ENC_QR_PAYLOAD = "encryptedQrPayload";
     public static final String DEC_PAY_TOKEN_KEY = "decryptedPaymentToken";
     public static final String PA_KEY = "pa";
     public static final String UID_KEY = "uid";
@@ -101,50 +101,39 @@ public class Payload {
     /*
     * Payload set 1 to be encoded into a QR code.
     * */
-    public static byte[] finalizePayloadSet1(byte[] fuzzyVault, byte[] encryptedPaymentToken, byte[] paBytes, byte[] uidBytes){
-        // fuzzy vault(bytes) + IV+ciphertext of payment token(bytes) + payment amount(bytes) + UID(string)
+    public static byte[] finalizePayloadSet1(byte[] fuzzyVault, byte[] encryptedQrPayload){
+        // fuzzy vault(bytes) + IV+ciphertext of [payment token(bytes) + payment amount(bytes) + UID(byte)]
         if (fuzzyVault.length != FV_BYTE_SIZE) {
             throw new IllegalArgumentException("fuzzyVault must have a length of " + FV_BYTE_SIZE);
         }
-        if (encryptedPaymentToken.length != ENC_PAYMENT_TOKEN_BYTE_SIZE) {
-            throw new IllegalArgumentException("ivEncryptedToken must have a length of " + ENC_PAYMENT_TOKEN_BYTE_SIZE);
+        if((fuzzyVault.length + encryptedQrPayload.length) < PAYLOAD_SET_1_MIN_SIZE
+                || (fuzzyVault.length + encryptedQrPayload.length) > PAYLOAD_SET_1_MAX_SIZE){
+            throw new IllegalArgumentException("payloadSet1 must have a length between " + PAYLOAD_SET_1_MIN_SIZE + " - " + PAYLOAD_SET_1_MAX_SIZE);
         }
-        if (paBytes.length != PA_BYTE_SIZE) {
-            throw new IllegalArgumentException("paBytes must have a length of " + PA_BYTE_SIZE);
-        }
-        /*if (uid.length() > 15){
-            throw new IllegalArgumentException("UID must be less than 16 characters");
-        }*/
-        return ArrayUtils.concatByteArrays(fuzzyVault, encryptedPaymentToken, paBytes, uidBytes);
+        return ArrayUtils.concatByteArrays(fuzzyVault, encryptedQrPayload);
     }
     public static Map<String, byte[]> unpackPayloadSet1(byte[] payloadSet1){
-        // fuzzy vault + IV+ciphertext of payment token + payment amount + UID (variable length)
-        if (payloadSet1.length <= PAYLOAD_SET_1_MIN_SIZE){
-            throw new IllegalArgumentException("payloadSet1 must have a length greater than " + PAYLOAD_SET_1_MIN_SIZE);
+        // fuzzy vault + IV+ciphertext of [payment token + payment amount + UID (variable length)]
+        if (payloadSet1.length < PAYLOAD_SET_1_MIN_SIZE || payloadSet1.length > PAYLOAD_SET_1_MAX_SIZE){
+            throw new IllegalArgumentException("payloadSet1 must have a length between " + PAYLOAD_SET_1_MIN_SIZE + " - " + PAYLOAD_SET_1_MAX_SIZE);
         }
         byte[] fv = new byte[FV_BYTE_SIZE];
-        byte[] encPaymentToken = new byte[ENC_PAYMENT_TOKEN_BYTE_SIZE];
-        byte[] pa = new byte[PA_BYTE_SIZE];
-        byte[] uid = new byte[payloadSet1.length - FV_BYTE_SIZE - ENC_PAYMENT_TOKEN_BYTE_SIZE - PA_BYTE_SIZE];
-        System.arraycopy(payloadSet1, 0, fv, 0, fv.length);
-        System.arraycopy(payloadSet1, fv.length, encPaymentToken, 0, encPaymentToken.length);
-        System.arraycopy(payloadSet1, fv.length + encPaymentToken.length, pa, 0, pa.length);
-        System.arraycopy(payloadSet1, fv.length + encPaymentToken.length + pa.length, uid, 0, uid.length);
+        byte[] encQrPayload = new byte[payloadSet1.length - FV_BYTE_SIZE];
+        System.arraycopy(payloadSet1, 0, fv, 0, FV_BYTE_SIZE);
+        System.arraycopy(payloadSet1, FV_BYTE_SIZE, encQrPayload, 0, encQrPayload.length);
         return Map.of(
                 FV_KEY, fv,
-                ENC_PAY_TOKEN_KEY, encPaymentToken,
-                PA_KEY, pa,
-                UID_KEY, uid
+                ENC_QR_PAYLOAD, encQrPayload
         );
     }
 
     /*
     * Payload set 2 to be transmitted via ultrasonic audio channel.
     * */
-    public static byte[] finalizePayloadSet2(byte[] encryptedKeyToken, byte[][] metadataOffsets){
-        // encryptedTokenKey (16 bytes + 12 bytes IV + 12 bytes tag) + 6 offset values (4 bytes each)
-        if (encryptedKeyToken.length != ENC_KEY_TOKEN_BYTE_SIZE) {
-            throw new IllegalArgumentException("encryptedTokenKey must have a length of " + ENC_KEY_TOKEN_BYTE_SIZE);
+    public static byte[] finalizePayloadSet2(byte[] encryptedKeyForQrPayload, byte[][] metadataOffsets){
+        // encryptedKeyForQrPayload (16 bytes + 12 bytes IV + 12 bytes tag) + 6 offset values (4 bytes each)
+        if (encryptedKeyForQrPayload.length != ENC_KEY_QR_PAYLOAD_BYTE_SIZE) {
+            throw new IllegalArgumentException("encryptedKeyForQrPayload must have a length of " + ENC_KEY_QR_PAYLOAD_BYTE_SIZE);
         }
         if (metadataOffsets.length != 6){
             throw new IllegalArgumentException("metadataOffsets must have a length of 6");
@@ -156,22 +145,22 @@ public class Payload {
             }
             System.arraycopy(metadataOffsets[i], 0, totalOffsetBytes, OFFSET_BYTE_SIZE * i, OFFSET_BYTE_SIZE);
         }
-        return ArrayUtils.concatByteArrays(encryptedKeyToken, totalOffsetBytes);
+        return ArrayUtils.concatByteArrays(encryptedKeyForQrPayload, totalOffsetBytes);
     }
 
     public static Map<String, byte[]> unpackPayloadSet2(byte[] payloadSet2){
-        // encryptedTokenKey (16 bytes + 12 bytes IV + 12 bytes tag) + 6 offset values (4 bytes each)
+        // encryptedKeyQrPayload (16 bytes + 12 bytes IV + 12 bytes tag) + 6 offset values (4 bytes each)
         if (payloadSet2.length != PAYLOAD_SET_2_SIZE){
             throw new IllegalArgumentException("payloadSet2 must have a length of " + PAYLOAD_SET_2_SIZE);
         }
-        byte[] encryptedKeyToken = new byte[ENC_KEY_TOKEN_BYTE_SIZE];
+        byte[] encryptedKeyQrPayload = new byte[ENC_KEY_QR_PAYLOAD_BYTE_SIZE];
         byte[][] metadataOffsets = new byte[6][OFFSET_BYTE_SIZE];
-        System.arraycopy(payloadSet2, 0, encryptedKeyToken, 0, encryptedKeyToken.length);
+        System.arraycopy(payloadSet2, 0, encryptedKeyQrPayload, 0, ENC_KEY_QR_PAYLOAD_BYTE_SIZE);
         for (int i = 0; i < 6; i++){
-            System.arraycopy(payloadSet2, ENC_KEY_TOKEN_BYTE_SIZE + OFFSET_BYTE_SIZE * i, metadataOffsets[i], 0, OFFSET_BYTE_SIZE);
+            System.arraycopy(payloadSet2, ENC_KEY_QR_PAYLOAD_BYTE_SIZE + OFFSET_BYTE_SIZE * i, metadataOffsets[i], 0, OFFSET_BYTE_SIZE);
         }
         return Map.of(
-                ENC_KEY_TOKEN_KEY, encryptedKeyToken,
+                ENC_KEY_QR_PAYLOAD_KEY, encryptedKeyQrPayload,
                 TIME_OFFSET_KEY, metadataOffsets[0],
                 LATITUDE_OFFSET_KEY, metadataOffsets[1],
                 LONGITUDE_OFFSET_KEY, metadataOffsets[2],
@@ -262,13 +251,13 @@ public class Payload {
 
         // Generate random key for encrypting payment token
         SecretKey key1 = Crypto.generateAesKey();
-        // Encrypt payment token with AES-GCM, IV is prepended to the ciphertext
-        byte[] encryptedPaymentToken = Crypto.encryptAesGcm(key1, paymentToken);
+        // Concat payment token, pa, uid and encrypt the resulting payload with AES-GCM, IV is prepended to the ciphertext
+        byte[] encryptedQrPayload = Crypto.encryptAesGcm(key1, ArrayUtils.concatByteArrays(paymentToken, paBytes, uidBytes));
 
         // Generate another random key for encrypting the keyForPaymentToken
         SecretKey key2 = Crypto.generateAesKey();
         // Encrypt keyToken with AES-GCM, IV is prepended to the ciphertext
-        byte[] encryptedKeyForPaymentToken = Crypto.encryptAesGcm(key2, key1.getEncoded());
+        byte[] encryptedKeyForQrPayload = Crypto.encryptAesGcm(key2, key1.getEncoded());
 
         // compute CRC16 checksum for key 2
         byte[] key2Bytes = key2.getEncoded();
@@ -285,8 +274,8 @@ public class Payload {
         int[][] fuzzyVault = FuzzyVault.generateFuzzyVault(genuineSet, chaffSet);
         byte[] fuzzyVaultBytes = FuzzyVault.flattenFuzzyVaultToBytes(fuzzyVault);
 
-        byte[] payloadSet1 = finalizePayloadSet1(fuzzyVaultBytes, encryptedPaymentToken, paBytes, uidBytes);
-        byte[] payloadSet2 = finalizePayloadSet2(encryptedKeyForPaymentToken, metadataOffsets);
+        byte[] payloadSet1 = finalizePayloadSet1(fuzzyVaultBytes, encryptedQrPayload);
+        byte[] payloadSet2 = finalizePayloadSet2(encryptedKeyForQrPayload, metadataOffsets);
 
         return Map.of(
                 PAYLOAD_SET_1_KEY, payloadSet1,
@@ -308,7 +297,7 @@ public class Payload {
                                                                  @NonNull final Float accelZ) throws Exception {
 
         Map<String, byte[]> unpackedPayloadSet2 = unpackPayloadSet2(payloadSet2);
-        byte[] encryptedKeyForPaymentToken = unpackedPayloadSet2.get(ENC_KEY_TOKEN_KEY);
+        byte[] encryptedKeyForQrPayload = unpackedPayloadSet2.get(ENC_KEY_QR_PAYLOAD_KEY);
         byte[] timeOffsetBytes = unpackedPayloadSet2.get(TIME_OFFSET_KEY);
         byte[] latitudeOffsetBytes = unpackedPayloadSet2.get(LATITUDE_OFFSET_KEY);
         byte[] longitudeOffsetBytes = unpackedPayloadSet2.get(LONGITUDE_OFFSET_KEY);
@@ -343,9 +332,7 @@ public class Payload {
 
         Map<String, byte[]> unpackedPayloadSet1 = unpackPayloadSet1(payloadSet1);
         byte[] fvBytes = unpackedPayloadSet1.get(FV_KEY);
-        byte[] encryptedPaymentToken = unpackedPayloadSet1.get(ENC_PAY_TOKEN_KEY);
-        byte[] paBytes = unpackedPayloadSet1.get(PA_KEY);
-        byte[] uidBytes = unpackedPayloadSet1.get(UID_KEY);
+        byte[] encryptedQrPayload = unpackedPayloadSet1.get(ENC_QR_PAYLOAD);
 
         int[][] fuzzyVault = FuzzyVault.fuzzyVaultBytesToDecimalPairs(fvBytes);
         int[] genuinePointsX = Format.twoBytesToDecimals(metadataFingerprint);
@@ -360,9 +347,17 @@ public class Payload {
             throw new PayloadException("Key2 reconstruction failed - CRC mismatch.");
         }
         SecretKey reconstructedKey2 = Crypto.secretKeyFromBytes(key2);
-        byte[] decryptedPaymentTokenKeyBytes = Crypto.decryptAesGcm(reconstructedKey2, encryptedKeyForPaymentToken);
-        SecretKey decryptedPaymentTokenKey =  Crypto.secretKeyFromBytes(decryptedPaymentTokenKeyBytes);
-        byte[] decryptedPaymentToken = Crypto.decryptAesGcm(decryptedPaymentTokenKey, encryptedPaymentToken);
+        byte[] decryptedQrPayloadKeyBytes = Crypto.decryptAesGcm(reconstructedKey2, encryptedKeyForQrPayload);
+        SecretKey decryptedQrPayloadKey =  Crypto.secretKeyFromBytes(decryptedQrPayloadKeyBytes);
+        byte[] decryptedQrPayload = Crypto.decryptAesGcm(decryptedQrPayloadKey, encryptedQrPayload);
+        // | payment token | pa | uid |
+        byte[] decryptedPaymentToken = new byte[PAYMENT_TOKEN_BYTE_SIZE];
+        byte[] paBytes = new byte[PA_BYTE_SIZE];
+        byte[] uidBytes = new byte[decryptedQrPayload.length - PAYMENT_TOKEN_BYTE_SIZE - PA_BYTE_SIZE];
+        System.arraycopy(decryptedQrPayload, 0, decryptedPaymentToken, 0, PAYMENT_TOKEN_BYTE_SIZE);
+        System.arraycopy(decryptedQrPayload, PAYMENT_TOKEN_BYTE_SIZE, paBytes, 0, PA_BYTE_SIZE);
+        System.arraycopy(decryptedQrPayload, PAYMENT_TOKEN_BYTE_SIZE + PA_BYTE_SIZE, uidBytes, 0, uidBytes.length);
+
         return Map.of(UID_KEY, uidBytes,
                 PA_KEY, paBytes,
                 DEC_PAY_TOKEN_KEY, decryptedPaymentToken,
