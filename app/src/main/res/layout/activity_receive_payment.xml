@@ -41,7 +41,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
-
+        android:visibility="gone"
         android:id="@+id/cameraContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -95,7 +95,7 @@
 
     <!-- Results UI shown after a valid QR is scanned -->
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:visibility="gone"
+
         android:id="@+id/receivePaymentResultsContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -132,9 +132,26 @@
             android:textIsSelectable="true"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHeight_percent="0.43"
+            app:layout_constraintHeight_percent="0.30"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvReceivePaymentResultsLabel" />
+
+        <TextView
+            android:id="@+id/tvPaymentFailureDebugInfo"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="12dp"
+            android:background="@android:color/transparent"
+            android:gravity="start|top"
+            android:padding="4dp"
+            android:text=""
+            android:textColor="#FF0000"
+            android:textIsSelectable="true"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.15"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvReceivePaymentResults" />
 
         <Button
             android:id="@+id/btnScanAgain"
@@ -152,7 +169,7 @@
             app:cornerRadius="35dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvReceivePaymentResults"
+            app:layout_constraintTop_toBottomOf="@id/tvPaymentFailureDebugInfo"
             app:layout_constraintWidth_percent="0.48" />
 
         <Button

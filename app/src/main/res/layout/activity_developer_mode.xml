@@ -120,6 +120,15 @@
                 android:textAllCaps="false"
                 android:textSize="26sp" />
 
+            <Button
+                android:id="@+id/btnSecurityDemo"
+                android:layout_width="match_parent"
+                android:layout_height="78dp"
+                android:layout_marginBottom="34dp"
+                android:text="Security Demo"
+                android:textAllCaps="false"
+                android:textSize="26sp" />
+
         </LinearLayout>
     </ScrollView>
 

@@ -40,10 +40,10 @@ public class MakePaymentActivity extends AppCompatActivity implements Metadata.M
     private static final int MAX_TOTAL_CHARS = 6;     // e.g. 9999.9
     private static final int MAX_INT_DIGITS = 4;      // 0 - 9999
     private static final int MAX_DEC_DIGITS = 1;      // 0 - 9
-    private static final int METADATA_COLLECTION_INTERVAL_MS = 1000;
-    private static final int AUDIO_TRANSMISSION_DELAY_MS = 1800;
+    protected static final int METADATA_COLLECTION_INTERVAL_MS = 1000;
+    protected static final int AUDIO_TRANSMISSION_DELAY_MS = 1800;
 
-    private static final long METADATA_COLLECTION_DELAY = 700L;
+    protected static final long METADATA_COLLECTION_DELAY = 700L;
 
     private ConstraintLayout layoutEnterAmount;
     private ConstraintLayout layoutShowQr;
@@ -53,9 +53,9 @@ public class MakePaymentActivity extends AppCompatActivity implements Metadata.M
     private Button btnGenerateQr;
     private ImageView ivQrCode;
 
-    private Metadata metadata;
-    private ScheduledExecutorService metadataScheduler;
-    private QuietTransmitter quietTransmitter;
+    protected Metadata metadata;
+    protected ScheduledExecutorService metadataScheduler;
+    protected QuietTransmitter quietTransmitter;
 
     // --- Cached Metadata ---
     private final Object metadataLock = new Object();
@@ -67,7 +67,7 @@ public class MakePaymentActivity extends AppCompatActivity implements Metadata.M
     private float cachedAccelZ;
     // --- Metadata Collection ---
 
-    private UserProfile userProfile;
+    protected UserProfile userProfile;
 
     private final AtomicBoolean isFirstMetadataCollected = new AtomicBoolean(false);
 
@@ -122,7 +122,7 @@ public class MakePaymentActivity extends AppCompatActivity implements Metadata.M
         updateGenerateButtonEnabled();
     }
 
-    private void startMetadataCollectionAndTransmission() {
+    protected void startMetadataCollectionAndTransmission() {
         isFirstMetadataCollected.set(false);
         if (metadataScheduler == null || metadataScheduler.isShutdown()) {
             metadataScheduler = Executors.newSingleThreadScheduledExecutor();
@@ -136,7 +136,7 @@ public class MakePaymentActivity extends AppCompatActivity implements Metadata.M
         );
     }
 
-    private void stopMetadataCollectionAndTransmission() {
+    protected void stopMetadataCollectionAndTransmission() {
         // Stop the scheduler
         if (metadataScheduler != null) {
             metadataScheduler.shutdownNow();

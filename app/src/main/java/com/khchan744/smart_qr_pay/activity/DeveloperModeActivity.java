@@ -22,44 +22,38 @@ public class DeveloperModeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_developer_mode);
-
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        Button btnTestGetMetadata = findViewById(R.id.btnTestGetMetadata);
-        Button btnTestTransmitter = findViewById(R.id.btnTestTransmitter);
-        Button btnTestReceiver = findViewById(R.id.btnTestReceiver);
-        Button btnTestGenQrCode = findViewById(R.id.btnTestGenQrCode);
-        Button btnTestScanQrCode = findViewById(R.id.btnTestScanQrCode);
-        Button btnTransferMetadata = findViewById(R.id.btnTransferMetadata);
-        Button btnCompareMetadata = findViewById(R.id.btnCompareMetadata);
-        Button btnBack = findViewById(R.id.btnBack);
+        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
 
-        btnTestGetMetadata.setOnClickListener(v ->
+        findViewById(R.id.btnTestGetMetadata).setOnClickListener(v ->
                 startActivity(new Intent(DeveloperModeActivity.this, GetMetadataActivity.class)));
 
-        btnTestTransmitter.setOnClickListener(v ->
+        findViewById(R.id.btnTestTransmitter).setOnClickListener(v ->
                 startActivity(new Intent(DeveloperModeActivity.this, TransmitActivity.class)));
 
-        btnTestReceiver.setOnClickListener(v ->
+        findViewById(R.id.btnTestReceiver).setOnClickListener(v ->
                 startActivity(new Intent(DeveloperModeActivity.this, ReceiveActivity.class)));
 
-        btnTestGenQrCode.setOnClickListener(v ->
+        findViewById(R.id.btnTestGenQrCode).setOnClickListener(v ->
                 startActivity(new Intent(DeveloperModeActivity.this, GenQRActivity.class)));
 
-        btnTestScanQrCode.setOnClickListener(v ->
+        findViewById(R.id.btnTestScanQrCode).setOnClickListener(v ->
                 startActivity(new Intent(DeveloperModeActivity.this, ScanQRActivity.class)));
 
-        btnTransferMetadata.setOnClickListener(v ->
+        findViewById(R.id.btnTransferMetadata).setOnClickListener(v ->
                 startActivity(new Intent(DeveloperModeActivity.this, TransferMetadataActivity.class)));
 
-        btnCompareMetadata.setOnClickListener(v ->
+        findViewById(R.id.btnCompareMetadata).setOnClickListener(v ->
                 startActivity(new Intent(DeveloperModeActivity.this, CompareMetadataActivity.class)));
 
-        btnBack.setOnClickListener(v -> finish());
+        findViewById(R.id.btnSecurityDemo).setOnClickListener(v ->
+                startActivity(new Intent(DeveloperModeActivity.this, SecurityDemoActivity.class)));
+
     }
 
     private void showClickedToast(String buttonName) {

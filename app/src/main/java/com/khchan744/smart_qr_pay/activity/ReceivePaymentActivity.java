@@ -47,6 +47,8 @@ public class ReceivePaymentActivity extends AppCompatActivity implements QrScann
     private static final int BUFFER_SIZE = 1024;
     private static final long METADATA_COLLECTION_DELAY = 1500L;
 
+    private static final String DEFAULT_FAILURE_MSG = "Receive payment failure!";
+
     private enum State {
         SCANNING,
         PROCESSING,
@@ -58,6 +60,7 @@ public class ReceivePaymentActivity extends AppCompatActivity implements QrScann
     private PreviewView previewView;
     private TextView tvProcessingHint;
     private TextView tvReceivePaymentResults;
+    private TextView tvPaymentFailureDebugInfo;
 
     private QrScanner qrScanner;
     private QuietReceiver quietReceiver;
@@ -70,6 +73,7 @@ public class ReceivePaymentActivity extends AppCompatActivity implements QrScann
     private byte[] payloadSet2 = null;
 
     private UserProfile userProfile;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +91,7 @@ public class ReceivePaymentActivity extends AppCompatActivity implements QrScann
         previewView = findViewById(R.id.previewView);
         tvProcessingHint = findViewById(R.id.tvProcessingHint);
         tvReceivePaymentResults = findViewById(R.id.tvReceivePaymentResults);
+        tvPaymentFailureDebugInfo = findViewById(R.id.tvPaymentFailureDebugInfo);
 
         findViewById(R.id.btnScanAgain).setOnClickListener(v -> startScanningAndReceiving());
         findViewById(R.id.btnFinish).setOnClickListener(v -> {
@@ -252,7 +257,8 @@ public class ReceivePaymentActivity extends AppCompatActivity implements QrScann
 
         // The check in checkAndProceedIfReady ensures these are not null
         if (payloadSet1 == null || payloadSet2 == null) {
-            tvReceivePaymentResults.setText("Error: Payloads are missing.");
+            tvReceivePaymentResults.setText(DEFAULT_FAILURE_MSG);
+            tvPaymentFailureDebugInfo.setText("Debug info:\nError: Payloads are missing.");
             return;
         }
         double latitude = location.getLatitude();
@@ -284,12 +290,14 @@ public class ReceivePaymentActivity extends AppCompatActivity implements QrScann
                     @Override
                     public void onResponse(Call<StandardRespDto> call, Response<StandardRespDto> response) {
                         if (!response.isSuccessful()) {
-                            tvReceivePaymentResults.setText("Request failed: HTTP " + response.code());
+                            tvReceivePaymentResults.setText(DEFAULT_FAILURE_MSG);
+                            tvPaymentFailureDebugInfo.setText("Debug info:\nRequest failed: HTTP " + response.code());
                             return;
                         }
                         StandardRespDto respBody = response.body();
                         if (respBody == null) {
-                            tvReceivePaymentResults.setText("Empty response from server.");
+                            tvReceivePaymentResults.setText(DEFAULT_FAILURE_MSG);
+                            tvPaymentFailureDebugInfo.setText("Debug info:\nEmpty response from server.");
                             return;
                         }
                         String message = respBody.getResponse() != null ? respBody.getResponse() : "";
@@ -298,7 +306,8 @@ public class ReceivePaymentActivity extends AppCompatActivity implements QrScann
 
                     @Override
                     public void onFailure(Call<StandardRespDto> call, Throwable t) {
-                        tvReceivePaymentResults.setText("Network error: " + (t.getMessage() != null ? t.getMessage() : "unknown"));
+                        tvReceivePaymentResults.setText(DEFAULT_FAILURE_MSG);
+                        tvPaymentFailureDebugInfo.setText("Debug info:\nNetwork error: " + (t.getMessage() != null ? t.getMessage() : "unknown"));
                     }
                 });
 
@@ -313,11 +322,13 @@ public class ReceivePaymentActivity extends AppCompatActivity implements QrScann
                     String paymentSuccess = "You have successfully received HK$" + payerPaymentAmount + " from " + payerUid + ".";
                     tvReceivePaymentResults.setText(paymentSuccess);
                 } else {
-                    tvReceivePaymentResults.setText("Receive payment failure: invalid payment token.");
+                    tvReceivePaymentResults.setText(DEFAULT_FAILURE_MSG);
+                    tvPaymentFailureDebugInfo.setText("Debug info:\nInvalid payment token.");
                 }
             }
         } catch (Exception e) {
-            tvReceivePaymentResults.setText(e.getMessage());
+            tvReceivePaymentResults.setText(DEFAULT_FAILURE_MSG);
+            tvPaymentFailureDebugInfo.setText("Debug info:\n" + e.getMessage());
         }
     }
 
@@ -327,7 +338,8 @@ public class ReceivePaymentActivity extends AppCompatActivity implements QrScann
         if (currentState == State.PROCESSING) {
             updateUiForResultDisplay();
             String retryMessage = errorMessage + "\nRetrying...";
-            tvReceivePaymentResults.setText(retryMessage);
+            tvReceivePaymentResults.setText(DEFAULT_FAILURE_MSG);
+            tvPaymentFailureDebugInfo.setText("Debug info:\n" + retryMessage);
             // Retry collection
             metadata.startCollection(this, this);
         }
