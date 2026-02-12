@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.SecurityDemoActivity">
+
+    <TextView
+        android:id="@+id/headerSecurityDemo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="18dp"
+        android:text="Security Demo"
+        android:textColor="@android:color/white"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginEnd="10dp"
+        android:backgroundTint="@android:color/transparent"
+        android:minWidth="64dp"
+        android:minHeight="40dp"
+        android:paddingHorizontal="8dp"
+        android:text=" &lt; Back "
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/headerSecurityDemo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/headerSecurityDemo" />
+
+    <!-- Layout 1: Fake QR Config -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+
+        android:id="@+id/fakeQrConfigContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="25dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/headerSecurityDemo">
+
+        <TextView
+            android:id="@+id/tvFakeQrConfigLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fake QR Code Config:"
+            android:paddingBottom="5dp"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/fakeQrConfigContainer"
+            app:layout_constraintTop_toTopOf="@+id/fakeQrConfigContainer" />
+
+        <!-- Switches + status area -->
+        <LinearLayout
+            android:id="@+id/llSwitchRows"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvFakeQrConfigLabel">
+
+            <!-- Row: QR Code -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:layout_marginBottom="7dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchQrCode"
+                    android:layout_width="185dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="end|center_vertical"
+                    android:text="QR Code "
+                    android:textStyle="bold"
+                    android:textSize="17sp"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="20dp"
+                    android:scaleX="1.3"
+                    android:scaleY="1.3"
+                    android:checked="true"/>
+
+                <TextView
+                    android:id="@+id/tvQrCodeMode"
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:paddingStart="14dp"
+                    android:text="Dynamic"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Row: Timestamp -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:layout_marginBottom="7dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchTimestamp"
+                    android:layout_width="185dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="end|center_vertical"
+                    android:text="Timestamp "
+                    android:textStyle="bold"
+                    android:textSize="17sp"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="20dp"
+                    android:scaleX="1.3"
+                    android:scaleY="1.3"
+                    android:checked="true"/>
+
+                <TextView
+                    android:id="@+id/tvTimestampMode"
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:paddingStart="14dp"
+                    android:text="Real-time"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Row: Latitude -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:layout_marginBottom="7dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchLatitude"
+                    android:layout_width="185dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="end|center_vertical"
+                    android:text="Latitude "
+                    android:textStyle="bold"
+                    android:textSize="17sp"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="20dp"
+                    android:scaleX="1.3"
+                    android:scaleY="1.3"
+                    android:checked="true"/>
+
+                <TextView
+                    android:id="@+id/tvLatitudeMode"
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:paddingStart="14dp"
+                    android:text="Real-time"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Row: Longitude -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:layout_marginBottom="7dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchLongitude"
+                    android:layout_width="185dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="end|center_vertical"
+                    android:text="Longitude "
+                    android:textStyle="bold"
+                    android:textSize="17sp"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="20dp"
+                    android:scaleX="1.3"
+                    android:scaleY="1.3"
+                    android:checked="true"/>
+
+                <TextView
+                    android:id="@+id/tvLongitudeMode"
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:paddingStart="14dp"
+                    android:text="Real-time"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Row: x-axis -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:layout_marginBottom="7dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchXAxis"
+                    android:layout_width="185dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="end|center_vertical"
+                    android:text="x-axis "
+                    android:textStyle="bold"
+                    android:textSize="17sp"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="20dp"
+                    android:scaleX="1.3"
+                    android:scaleY="1.3"
+                    android:checked="true"/>
+
+                <TextView
+                    android:id="@+id/tvXAxisMode"
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:paddingStart="14dp"
+                    android:text="Real-time"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Row: y-axis -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:layout_marginBottom="7dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchYAxis"
+                    android:layout_width="185dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="end|center_vertical"
+                    android:text="y-axis "
+                    android:textStyle="bold"
+                    android:textSize="17sp"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="20dp"
+                    android:scaleX="1.3"
+                    android:scaleY="1.3"
+                    android:checked="true"/>
+
+                <TextView
+                    android:id="@+id/tvYAxisMode"
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:paddingStart="14dp"
+                    android:text="Real-time"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Row: z-axis -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:layout_marginBottom="7dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchZAxis"
+                    android:layout_width="185dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="end|center_vertical"
+                    android:text="z-axis "
+                    android:textStyle="bold"
+                    android:textSize="17sp"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="20dp"
+                    android:scaleX="1.3"
+                    android:scaleY="1.3"
+                    android:checked="true"/>
+
+                <TextView
+                    android:id="@+id/tvZAxisMode"
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:paddingStart="14dp"
+                    android:text="Real-time"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnGenerateFakeQr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:paddingTop="18dp"
+                android:paddingBottom="18dp"
+                android:paddingStart="60dp"
+                android:paddingEnd="60dp"
+                android:text="Generate Fake\nQR Code"
+                android:textAllCaps="false"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                app:cornerRadius="45dp"
+                android:enabled="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Layout 2: Show QR -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:visibility="gone"
+        android:id="@+id/layoutShowQr"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/headerSecurityDemo">
+
+        <TextView
+            android:id="@+id/tvScanToReceive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text=""
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Square QR display -->
+        <ImageView
+            android:id="@+id/ivQrCode"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="23dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="Payment QR code"
+            android:scaleType="fitCenter"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvScanToReceive"
+            app:layout_constraintWidth_percent="0.70" />
+
+        <TextView
+            android:id="@+id/tvHoldSteadyReminder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="(Please hold steady)"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivQrCode" />
+
+        <Button
+            android:id="@+id/btnMakeAnotherPayment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginTop="25dp"
+            android:paddingTop="7dp"
+            android:paddingBottom="15dp"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            android:text="Make\n Another Payment"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            app:cornerRadius="30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvHoldSteadyReminder" />
+
+        <Button
+            android:id="@+id/btnFinish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:paddingStart="100dp"
+            android:paddingEnd="100dp"
+            android:paddingTop="23dp"
+            android:paddingBottom="23dp"
+            android:textSize="25sp"
+            android:text="Finish"
+            android:textStyle="bold"
+            app:cornerRadius="30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnMakeAnotherPayment" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
