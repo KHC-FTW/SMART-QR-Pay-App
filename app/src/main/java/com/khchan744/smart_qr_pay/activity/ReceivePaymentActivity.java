@@ -277,7 +277,6 @@ public class ReceivePaymentActivity extends AppCompatActivity implements QrScann
             byte[] payerPaymentToken = recoveredSecrets.get(Payload.DEC_PAY_TOKEN_KEY);
             byte[] payeeMetadataFingerprintBytes = recoveredSecrets.get(Payload.MF_KEY);
 
-
             if(userProfile.isOnline()){
                 String paymentToken = Format.base64Encode(payerPaymentToken);
                 String payerUsername = new String(payerUidBytes, StandardCharsets.UTF_8);
@@ -302,6 +301,7 @@ public class ReceivePaymentActivity extends AppCompatActivity implements QrScann
                         }
                         String message = respBody.getResponse() != null ? respBody.getResponse() : "";
                         tvReceivePaymentResults.setText(message);
+                        tvPaymentFailureDebugInfo.setText("");
                     }
 
                     @Override
@@ -321,6 +321,7 @@ public class ReceivePaymentActivity extends AppCompatActivity implements QrScann
                     String payerUid = new String(payerUidBytes, StandardCharsets.UTF_8);
                     String paymentSuccess = "You have successfully received HK$" + payerPaymentAmount + " from " + payerUid + ".";
                     tvReceivePaymentResults.setText(paymentSuccess);
+                    tvPaymentFailureDebugInfo.setText("");
                 } else {
                     tvReceivePaymentResults.setText(DEFAULT_FAILURE_MSG);
                     tvPaymentFailureDebugInfo.setText("Debug info:\nInvalid payment token.");
